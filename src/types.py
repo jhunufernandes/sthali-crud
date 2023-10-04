@@ -18,6 +18,7 @@ class Field:
     name: str
     type: type
     required: bool
+    default: Any = None
 
 
 @dataclass

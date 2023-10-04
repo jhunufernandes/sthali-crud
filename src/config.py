@@ -22,7 +22,8 @@ def config_router(resource_spec: ResourceSpec, schema: Schema, crud: CRUD) -> Re
         routes=[
             RouteConfig(
                 path='/',
-                endpoint=replace_type_hint(crud.create, ['resource', 'return'], response_model),
+                # endpoint=replace_type_hint(crud.create, ['resource', 'return'], response_model),
+                endpoint=crud.create,
                 response_model=response_model,
                 methods=['POST'],
                 status_code=201

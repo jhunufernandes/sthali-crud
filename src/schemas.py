@@ -17,6 +17,9 @@ class Schema(BaseModel):
         """
         return create_model(
             self.name,
-            **{field.name: (field.type, (None, ...)[field.required])
-               for field in self.fields}  # type: ignore
+            **{
+                field.name: (field.type, field.default or (None, ...)[field.required])
+                for field
+                in self.fields
+            }  # type: ignore
         )

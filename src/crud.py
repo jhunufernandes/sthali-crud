@@ -4,6 +4,8 @@ import requests
 from fastapi import HTTPException
 from pydantic import BaseModel, Extra
 
+import asyncio
+
 
 class CRUDException(HTTPException):
     def __init__(self, detail: str, status_code: int):
@@ -24,7 +26,8 @@ class CRUD:
     @staticmethod
     async def create(resource: Resource) -> Resource:
         try:
-            result = await resource.model_dump()
+            await asyncio.sleep(.5)
+            result = resource.model_dump()
             return Resource(**result)
         except Exception as exp:
             raise CRUDException(
