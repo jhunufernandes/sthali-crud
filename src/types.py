@@ -1,5 +1,5 @@
-from typing import Any, Callable, List, Literal, Optional, Union, Set
 from enum import Enum
+from typing import Any, Callable, List, Literal, Optional, Set, Union
 
 from fastapi import FastAPI
 from pydantic.dataclasses import dataclass
@@ -8,6 +8,9 @@ from pydantic.dataclasses import dataclass
 @dataclass
 class App(FastAPI):
     """App
+
+    Args:
+        FastAPI (_type_): _description_
     """
 
 
@@ -17,8 +20,8 @@ class Field:
     """
     name: str
     type: type
-    required: bool
     default: Any = None
+    allow_none: bool = False
 
 
 @dataclass
@@ -38,7 +41,8 @@ class RouteConfig:
     response_model: Any
     methods: Optional[Union[
         Set[Literal['GET', 'POST', 'PUT', 'PATCH', 'DELETE']],
-        List[Literal['GET', 'POST', 'PUT', 'PATCH', 'DELETE']]]] = None
+        List[Literal['GET', 'POST', 'PUT', 'PATCH', 'DELETE']]
+    ]] = None
     status_code: int = 200
 
 

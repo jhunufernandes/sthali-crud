@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Optional
 
 from pydantic import BaseModel, create_model
 
@@ -17,9 +17,5 @@ class Schema(BaseModel):
         """
         return create_model(
             self.name,
-            **{
-                field.name: (field.type, field.default or (None, ...)[field.required])
-                for field
-                in self.fields
-            }  # type: ignore
-        )
+            **{field.name: ((field.type, Optional[field.type])[field.allow_none], field.default or ...)
+               for field in self.fields})  # type: ignore
