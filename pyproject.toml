@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sthali_crud_jhunufernandes"
+name = "sthali-crud"
 version = "0.0.1"
 authors = [
   { name="Jhunu Fernandes", email="jhunu.fernandes@gmail.com" },
