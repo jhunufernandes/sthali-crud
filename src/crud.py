@@ -1,5 +1,3 @@
-import asyncio
-
 import requests
 from fastapi import HTTPException
 from pydantic import BaseModel, Extra
