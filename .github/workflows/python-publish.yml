@@ -11,6 +11,10 @@ name: Upload Python Package
 on:
   release:
     types: [published]
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -38,4 +42,4 @@ jobs:
         user: jhunufernandes
         password: pypi-AgEIcHlwaS5vcmcCJDllMTZlN2RjLTk0OWItNDUxMS04OTE4LWVkMzk0ZDZiMWViMwACKlszLCJmZWI5MzE3YS02MGUzLTQ5NzMtOGFkNi1mNTAzNDE3ODU5MDgiXQAABiCUBDoTbhfdb6k-l8Iv7qRD-x8c3-fY5pdtJjYyB_aDeA
 
-        
+
