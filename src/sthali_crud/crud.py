@@ -1,6 +1,6 @@
 import requests
 from fastapi import HTTPException
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 
 
 class CRUDException(HTTPException):
@@ -21,10 +21,10 @@ class Resource(BaseModel):
     Args:
         BaseModel (_type_): _description_
     """
-    # class Config:
-    #     """Config
-    #     """
-    #     extra = Extra.allow
+    class Config:
+        """Config
+        """
+        extra = 'allow'
 
 
 class CRUD:
