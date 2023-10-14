@@ -1,7 +1,7 @@
-from typing import List
-
+"""Config functions.
+"""
 from .crud import CRUD
-from .schemas import Schema
+from .schema import Schema
 from .types import ResourceCfg, ResourceSpec, RouteConfig
 
 
@@ -25,42 +25,43 @@ def config_router(resource_spec: ResourceSpec, schema: Schema, crud: CRUD) -> Re
         ResourceCfg: _description_
     """
 
-    response_model = schema.response_model
+    model = schema.model
     return ResourceCfg(
         prefix=f'/{resource_spec.name}',
         routes=[
             RouteConfig(
                 path='/',
-                endpoint=replace_type_hint(crud.create, ['resource', 'return'], response_model),
-                response_model=response_model,
+                endpoint=replace_type_hint(crud.create, ['resource'], model),
+                response_model=model,
                 methods=['POST'],
                 status_code=201),
             RouteConfig(
                 path='/{resource_id}/',
                 endpoint=crud.read,
-                response_model=response_model,
+                response_model=model,
                 methods=['GET']),
-            # RouteConfig(
-            #     path='/',
-            #     endpoint=crud.read_all,
-            #     response_model=List[response_model],
-            #     methods=['GET']),
+            # # RouteConfig(
+            # #     path='/',
+            # #     endpoint=crud.read_all,
+            # #     response_model=List[model],
+            # #     methods=['GET']),
             RouteConfig(
                 path='/{resource_id}/',
-                endpoint=replace_type_hint(crud.update, ['resource', 'return'], response_model),
-                response_model=response_model,
+                endpoint=crud.update,
+                # endpoint=crud.update,
+                response_model=model,
                 methods=['PATCH']),
-            # RouteConfig(
-            #     path='/{resource_id}/',
-            #     endpoint=crud.upsert,
-            #     response_model=response_model,
-            #     methods=['PUT']),
+            # # RouteConfig(
+            # #     path='/{resource_id}/',
+            # #     endpoint=crud.upsert,
+            # #     response_model=model,
+            # #     methods=['PUT']),
             RouteConfig(
                 path='/{resource_id}/',
                 endpoint=crud.delete,
                 response_model=None,
                 methods=['DELETE'],
                 status_code=204)
-                ],
+        ],
         tags=[resource_spec.name]
     )

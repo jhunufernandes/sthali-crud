@@ -1,111 +1,70 @@
-import requests
+"""Methods for CRUD.
+"""
+from typing import Callable
 from fastapi import HTTPException
 from pydantic import BaseModel
-
-
-class CRUDException(HTTPException):
-    """CRUDException
-
-    Args:
-        HTTPException (_type_): _description_
-    """
-    def __init__(self, detail: str, status_code: int = 400):
-        self.detail = detail
-        self.status_code = status_code
-        super().__init__(status_code, detail)
-
-
-class Resource(BaseModel):
-    """Resource
-
-    Args:
-        BaseModel (_type_): _description_
-    """
-    class Config:
-        """Config
-        """
-        extra = 'allow'
+from .db import DB
 
 
 class CRUD:
-    """CRUD
+    """CRUD main class.
     """
+    _db: DB
+    _model: type[BaseModel]
 
-    def __init__(self, resource: Resource, db=None) -> None:
+    class CRUDException(HTTPException):
+        """CRUD Exception.
+
+        Args:
+            HTTPException (Exception): FastAPI base Exception.
+        """
+        def __init__(self, detail: str, status_code: int = 400) -> None:
+            self.detail = detail
+            self.status_code = status_code
+            super().__init__(status_code, detail)
+
+    def __init__(self, db: DB, model: type[BaseModel]) -> None:
         self._db = db
-        self._resource = resource
+        self._model = model
 
-    @staticmethod
-    async def create(resource: Resource) -> Resource:
+    def _handle_crud_exception(self, exception: DB.DBException) -> None:
+        """Handle CRUD Exception.
+
+        Args:
+            exception (DB.DBException): Custom DB Exception.
+
+        Raises:
+            self.CRUDException: Custom CRUD Exception.
+        """
+        raise self.CRUDException(detail=repr(exception), status_code=400) from exception
+
+    async def _perform_crud(self,
+                            operation: Callable,
+                            resource_id: int = None,
+                            resource: type[BaseModel] = None) -> type[BaseModel] | None:
+        """Perform CRUD.
+
+        Args:
+            operation (Callable): DB function.
+            resource_id (int, optional): Identifier from model. Defaults to None.
+            resource (type[BaseModel], optional): Model payload. Defaults to None.
+
+        Returns:
+            type[BaseModel] | None: Model payload or none.
+        """
         try:
-            result = resource.model_dump()
-            return Resource(**result)
-        except Exception as exp:
-            raise CRUDException(
-                detail=repr(exp),
-                status_code=400,
-            ) from exp
+            return operation(resource_id, resource)
+        except DB.DBException as exception:
+            self._handle_crud_exception(exception)
 
-    @staticmethod
-    async def read(resource_id: int) -> Resource:
-        try:
-            response = requests.get(
-                f'https://swapi.dev/api/people/{resource_id}/',
-                timeout=10
-            )
-            response_json = response.json()
-            return Resource(**{
-                'id': response_json['url'].strip('/').split('/')[-1],
-                'name': response_json['name'],
-            })
-        except Exception as exp:
-            raise CRUDException(
-                detail=repr(exp),
-                status_code=400,
-            ) from exp
+    async def create(self, resource: type[BaseModel]) -> type[BaseModel]:
+        return await self._perform_crud(self._db.create, resource=resource)
 
-    @staticmethod
-    async def update(resource: Resource) -> Resource:
-        try:
-            result = resource.model_dump()
-            return Resource(**result)
-        except Exception as exp:
-            raise CRUDException(
-                detail=repr(exp),
-                status_code=400,
-            ) from exp
+    async def read(self, resource_id: int) -> type[BaseModel]:
+        return await self._perform_crud(self._db.read, resource_id=resource_id)
 
-    @staticmethod
-    async def delete(resource_id: int) -> None:
-        try:
-            return None
-        except Exception as exp:
-            raise CRUDException(
-                detail=repr(exp),
-                status_code=400,
-            ) from exp
+    async def update(self, resource_id: int, resource: type[BaseModel]) -> type[BaseModel]:
+        return await self._perform_crud(self._db.update, resource_id=resource_id, resource=resource)
 
-    # @staticmethod
-    # async def read_all(page: int = 1) -> List[Resource]:
-    #     try:
-    #         params = {
-    #             'page': page,
-    #         }
-    #         response = requests.get(
-    #             'https://swapi.dev/api/people',
-    #             params=params,
-    #             timeout=10
-    #         )
-    #         response_json = response.json()
-    #         return [
-    #             Resource(**{
-    #                 'id': r['url'].strip('/').split('/')[-1],
-    #                 'name': r['name'],
-    #             })
-    #             for r in response_json['results']
-    #         ]
-    #     except Exception as exp:
-    #         raise CRUDException(
-    #             detail=repr(exp),
-    #             status_code=400,
-    #         ) from exp
+    async def delete(self, resource_id: int) -> None:
+        return await self._perform_crud(self._db.delete, resource_id=resource_id)
