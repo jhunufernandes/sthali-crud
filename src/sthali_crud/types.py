@@ -1,8 +1,7 @@
 """Types.
 """
-from enum import Enum
-from typing import Any, Callable, Literal, Optional, Union
-
+from typing import Any, Callable, Literal, Optional
+from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
 
 
@@ -14,6 +13,9 @@ class Field:
     type: type
     default: Any = None
     allow_none: bool = False
+
+
+Model = type[BaseModel]
 
 
 @dataclass

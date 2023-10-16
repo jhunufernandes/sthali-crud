@@ -1,8 +1,8 @@
 """Methods for Schema.
 """
 from typing import Optional
-from pydantic import BaseModel, create_model
-from .types import Field
+from pydantic import create_model
+from .types import Field, Model
 
 
 class Schema:
@@ -13,11 +13,11 @@ class Schema:
         self._fields = fields
 
     @property
-    def model(self) -> type[BaseModel]:
+    def model(self) -> Model:
         """model property.
 
         Returns:
-            type[BaseModel]: Pydantic model.
+            Model: Pydantic model.
         """
         return create_model(self._name,
                             **{field.name: ((field.type, Optional[field.type])[field.allow_none], field.default or ...)

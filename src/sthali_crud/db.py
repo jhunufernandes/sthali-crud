@@ -2,9 +2,10 @@
 """
 from typing import Any
 from fastapi import HTTPException
+from .helpers import ModelClass
 
 
-class DB:
+class DB(ModelClass):
     """DB main class.
     """
     class DBException(HTTPException):
@@ -13,6 +14,9 @@ class DB:
         Args:
             HTTPException (Exception): FastAPI base Exception.
         """
+        detail: str
+        status_code: int
+
         def __init__(self, detail: str, status_code: int = 400) -> None:
             self.detail = detail
             self.status_code = status_code
