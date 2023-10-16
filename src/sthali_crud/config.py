@@ -1,12 +1,21 @@
 """Config functions.
 """
+from typing import Callable
 from .crud import CRUD
 from .schema import Schema
 from .types import ResourceCfg, ResourceSpec, RouteConfig
 
 
-def replace_type_hint(original_func, type_names, new_type):
-    """replace_type_hint
+def replace_type_hint(original_func: Callable, type_names: list[str], new_type: type) -> Callable:
+    """Replace type hint.
+
+    Args:
+        original_func (function): Function that will have __annotations__ replaced.
+        type_names (list[str] | set[str]): List of __annotations__ keys to be replaced.
+        new_type (type): New type.
+
+    Returns:
+        Callable: Original function.
     """
     for name in type_names:
         original_func.__annotations__[name] = new_type
@@ -14,15 +23,15 @@ def replace_type_hint(original_func, type_names, new_type):
 
 
 def config_router(resource_spec: ResourceSpec, schema: Schema, crud: CRUD) -> ResourceCfg:
-    """config_router
+    """Config router.
 
     Args:
-        resource_spec (ResourceSpec): _description_
-        schema (Schema): _description_
-        crud (CRUD): _description_
+        resource_spec (ResourceSpec): Resource specification.
+        schema (Schema): Schema.
+        crud (CRUD): CRUD.
 
     Returns:
-        ResourceCfg: _description_
+        ResourceCfg: Resource configuration.
     """
 
     model = schema.model
@@ -40,22 +49,11 @@ def config_router(resource_spec: ResourceSpec, schema: Schema, crud: CRUD) -> Re
                 endpoint=crud.read,
                 response_model=model,
                 methods=['GET']),
-            # # RouteConfig(
-            # #     path='/',
-            # #     endpoint=crud.read_all,
-            # #     response_model=List[model],
-            # #     methods=['GET']),
             RouteConfig(
                 path='/{resource_id}/',
-                endpoint=crud.update,
-                # endpoint=crud.update,
+                endpoint=replace_type_hint(crud.update, ['resource'], model),
                 response_model=model,
-                methods=['PATCH']),
-            # # RouteConfig(
-            # #     path='/{resource_id}/',
-            # #     endpoint=crud.upsert,
-            # #     response_model=model,
-            # #     methods=['PUT']),
+                methods=['PUT']),
             RouteConfig(
                 path='/{resource_id}/',
                 endpoint=crud.delete,

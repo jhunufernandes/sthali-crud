@@ -1,3 +1,5 @@
+"""Sthali CRUD client.
+"""
 from fastapi import APIRouter, FastAPI
 from .config import config_router
 from .crud import CRUD
@@ -28,10 +30,10 @@ class SthaliCRUD(ModelClass):
 
     @property
     def app(self) -> FastAPI:
-        """app property
+        """App property.
 
         Returns:
-            FastAPI: Fastapi client
+            FastAPI: Fastapi client.
         """
         return self._app
 
