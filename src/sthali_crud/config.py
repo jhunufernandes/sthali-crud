@@ -51,7 +51,12 @@ def config_router(resource_spec: ResourceSpec, schema: Schema, crud: CRUD) -> Re
                 methods=['GET']),
             RouteConfig(
                 path='/{resource_id}/',
-                endpoint=replace_type_hint(crud.update, ['resource'], model),
+                endpoint=replace_type_hint(crud.update_with_id_path, ['resource'], model),
+                response_model=model,
+                methods=['PUT']),
+            RouteConfig(
+                path='/',
+                endpoint=replace_type_hint(crud.update_without_id_path, ['resource'], model),
                 response_model=model,
                 methods=['PUT']),
             RouteConfig(

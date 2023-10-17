@@ -23,13 +23,13 @@ class DB(ModelClass):
             super().__init__(status_code, detail)
 
     def create(self, *args, **kwargs) -> Any:
-        raise self.DBException('Method not defined.')
+        raise NotImplementedError
 
     def read(self, *args, **kwargs) -> Any:
-        raise self.DBException('Method not defined.')
+        raise NotImplementedError
 
     def update(self, *args, **kwargs) -> Any:
-        raise self.DBException('Method not defined.')
+        raise NotImplementedError
 
     def delete(self, *args, **kwargs) -> Any:
-        raise self.DBException('Method not defined.')
+        raise NotImplementedError

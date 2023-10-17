@@ -62,13 +62,18 @@ class CRUD:
             self._handle_crud_exception(exception)
 
     async def create(self, resource: Model) -> Model:
-        return await self._perform_crud(self._db.create, resource=resource)
+        return await self._perform_crud(self._db.create, resource=resource.model_dump())
 
     async def read(self, resource_id: int) -> Model:
         return await self._perform_crud(self._db.read, resource_id=resource_id)
 
-    async def update(self, resource_id: int, resource: Model) -> Model:
-        return await self._perform_crud(self._db.update, resource_id=resource_id, resource=resource)
+    async def update_without_id_path(self, resource: Model) -> Model:
+        resource_id, resource_obj = (lambda id=None, **rest: (id, rest))(**resource)
+        return await self._perform_crud(self._db.update, resource_id=resource_id, resource=resource_obj)
+
+    async def update_with_id_path(self, resource_id: int, resource: Model) -> Model:
+        resource_obj = (lambda id=None, **rest: (rest))(**resource)
+        return await self._perform_crud(self._db.update, resource_id=resource_id, resource=resource_obj)
 
     async def delete(self, resource_id: int) -> None:
         return await self._perform_crud(self._db.delete, resource_id=resource_id)
