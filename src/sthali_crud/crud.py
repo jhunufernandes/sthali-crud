@@ -2,16 +2,17 @@
 """
 from typing import Callable
 from fastapi import HTTPException
-# from .helpers import ModelClass
+from pydantic import ValidationError
 from .db import DB
+from .helpers import ModelClass
 from .types import Model
 
 
-# class CRUD(ModelClass):
-class CRUD:
+class CRUD(ModelClass):
     """CRUD main class.
     """
     _db: DB
+    # _deconstruct: Callable = lambda id=None, **rest: (id, rest)
 
     class CRUDException(HTTPException):
         """CRUD Exception.
@@ -40,12 +41,13 @@ class CRUD:
         Raises:
             self.CRUDException: Custom CRUD Exception.
         """
-        raise self.CRUDException(detail=repr(exception), status_code=400) from exception
+        raise self.CRUDException(repr(exception)) from exception
 
     async def _perform_crud(self,
                             operation: Callable,
                             resource_id: int = None,
-                            resource: Model = None) -> Model | None:
+                            resource: Model = None,
+                            validate: bool = True) -> Model | None:
         """Perform CRUD.
 
         Args:
@@ -57,9 +59,17 @@ class CRUD:
             Model | None: Model payload or none.
         """
         try:
-            return operation(resource_id, resource)
+            result = operation(resource_id=resource_id, resource=resource)
+            if validate:
+                self.model(**result)
+            return result
         except DB.DBException as exception:
             self._handle_crud_exception(exception)
+        except ValidationError as exception:
+            raise self.CRUDException(detail=exception.errors(), status_code=422) from exception
+
+    async def _upsert(self, resource_id: int, resource_obj: Model) -> Model:
+        return await self._perform_crud(self._db.upsert, resource_id=resource_id, resource=resource_obj)
 
     async def create(self, resource: Model) -> Model:
         return await self._perform_crud(self._db.create, resource=resource.model_dump())
@@ -68,12 +78,13 @@ class CRUD:
         return await self._perform_crud(self._db.read, resource_id=resource_id)
 
     async def update_without_id_path(self, resource: Model) -> Model:
-        resource_id, resource_obj = (lambda id=None, **rest: (id, rest))(**resource)
-        return await self._perform_crud(self._db.update, resource_id=resource_id, resource=resource_obj)
+        resource_id, resource_obj = (lambda id=None, **rest: (id, rest))(**resource.model_dump())
+        return await self._upsert(resource_id=resource_id, resource_obj=resource_obj)
 
     async def update_with_id_path(self, resource_id: int, resource: Model) -> Model:
-        resource_obj = (lambda id=None, **rest: (rest))(**resource)
-        return await self._perform_crud(self._db.update, resource_id=resource_id, resource=resource_obj)
+        _, resource_obj = (lambda id=None, **rest: (id, rest))(**resource.model_dump())
+        return await self._upsert(resource_id=resource_id, resource_obj=resource_obj)
 
     async def delete(self, resource_id: int) -> None:
-        return await self._perform_crud(self._db.delete, resource_id=resource_id)
+        breakpoint()
+        return await self._perform_crud(self._db.delete, resource_id=resource_id, validate=False)

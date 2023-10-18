@@ -31,5 +31,8 @@ class DB(ModelClass):
     def update(self, *args, **kwargs) -> Any:
         raise NotImplementedError
 
+    def upsert(self, *args, **kwargs) -> Any:
+        raise NotImplementedError
+
     def delete(self, *args, **kwargs) -> Any:
         raise NotImplementedError

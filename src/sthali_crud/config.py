@@ -1,6 +1,6 @@
 """Config functions.
 """
-from typing import Callable
+from typing import Any, Callable
 from .crud import CRUD
 from .schema import Schema
 from .types import ResourceCfg, ResourceSpec, RouteConfig
@@ -35,23 +35,24 @@ def config_router(resource_spec: ResourceSpec, schema: Schema, crud: CRUD) -> Re
     """
 
     model = schema.model
+    model_without_id = schema.model_without_id
     return ResourceCfg(
         prefix=f'/{resource_spec.name}',
         routes=[
             RouteConfig(
                 path='/',
-                endpoint=replace_type_hint(crud.create, ['resource'], model),
+                endpoint=replace_type_hint(crud.create, ['resource', 'return'], model),
                 response_model=model,
                 methods=['POST'],
                 status_code=201),
             RouteConfig(
                 path='/{resource_id}/',
-                endpoint=crud.read,
+                endpoint=replace_type_hint(crud.read, ['return'], model),
                 response_model=model,
                 methods=['GET']),
             RouteConfig(
                 path='/{resource_id}/',
-                endpoint=replace_type_hint(crud.update_with_id_path, ['resource'], model),
+                endpoint=replace_type_hint(crud.update_with_id_path, ['resource'], model_without_id),
                 response_model=model,
                 methods=['PUT']),
             RouteConfig(
