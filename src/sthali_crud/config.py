@@ -35,13 +35,12 @@ def config_router(resource_spec: ResourceSpec, schema: Schema, crud: CRUD) -> Re
     """
 
     model = schema.model
-    model_without_id = schema.model_without_id
     return ResourceCfg(
         prefix=f'/{resource_spec.name}',
         routes=[
             RouteConfig(
                 path='/',
-                endpoint=replace_type_hint(crud.create, ['resource', 'return'], model),
+                endpoint=replace_type_hint(crud.create, ['resource'], model),
                 response_model=model,
                 methods=['POST'],
                 status_code=201),
@@ -51,21 +50,16 @@ def config_router(resource_spec: ResourceSpec, schema: Schema, crud: CRUD) -> Re
                 response_model=model,
                 methods=['GET']),
             RouteConfig(
-                path='/{resource_id}/',
-                endpoint=replace_type_hint(crud.update_with_id_path, ['resource'], model_without_id),
-                response_model=model,
-                methods=['PUT']),
-            RouteConfig(
                 path='/',
-                endpoint=replace_type_hint(crud.update_without_id_path, ['resource'], model),
+                endpoint=replace_type_hint(crud.update, ['resource'], model),
                 response_model=model,
                 methods=['PUT']),
-            RouteConfig(
-                path='/{resource_id}/',
-                endpoint=crud.delete,
-                response_model=None,
-                methods=['DELETE'],
-                status_code=204)
+            # RouteConfig(
+            #     path='/{resource_id}/',
+            #     endpoint=crud.delete,
+            #     response_model=None,
+            #     methods=['DELETE'],
+            #     status_code=204)
         ],
         tags=[resource_spec.name]
     )

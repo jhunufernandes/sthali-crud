@@ -1,23 +1,25 @@
 """Methods for Schema.
 """
-from pydantic import BaseModel, create_model
+from uuid import UUID, uuid4
+from pydantic import BaseModel, ConfigDict, create_model, Field as PydanticField
 from .types import Field, Model
+
+
+class Base(BaseModel):
+    """Base main class.
+    """
+    id: UUID = PydanticField(default_factory=uuid4)
+
+    model_config = ConfigDict(extra='allow')
 
 
 class Schema:
     """Schema main class.
     """
-    _model: Model
-    _model_without_id: Model
-
-    class Base(BaseModel):
-        """Base main class.
-        """
-        id: int
+    _model: Base
 
     def __init__(self, name: str, fields: list[Field]) -> None:
-        self._model = self._create_model(base=self.Base, name=name, fields=fields)
-        self._model_without_id = self._create_model(base=BaseModel, name=f'{name}_without_id', fields=fields)
+        self._model = self._create_model(base=Base, name=name, fields=fields)
 
     @property
     def model(self) -> Model:
@@ -27,15 +29,6 @@ class Schema:
             Model: Pydantic model.
         """
         return self._model
-
-    @property
-    def model_without_id(self) -> Model:
-        """model property without field id.
-
-        Returns:
-            Model: Pydantic model.
-        """
-        return self._model_without_id
 
     @staticmethod
     def _create_model(base: Model, name: str, fields: list[Field]) -> Model:

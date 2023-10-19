@@ -6,7 +6,7 @@ from .helpers import ModelClass
 
 
 class DB(ModelClass):
-    """DB main class.
+    """Sthali CRUD DB main class.
     """
     class DBException(HTTPException):
         """DB Exception.
@@ -22,9 +22,6 @@ class DB(ModelClass):
             self.status_code = status_code
             super().__init__(status_code, detail)
 
-    def create(self, *args, **kwargs) -> Any:
-        raise NotImplementedError
-
     def read(self, *args, **kwargs) -> Any:
         raise NotImplementedError
 
@@ -34,5 +31,5 @@ class DB(ModelClass):
     def upsert(self, *args, **kwargs) -> Any:
         raise NotImplementedError
 
-    def delete(self, *args, **kwargs) -> Any:
-        raise NotImplementedError
+    # def delete(self, *args, **kwargs) -> Any:
+    #     raise NotImplementedError

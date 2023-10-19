@@ -15,7 +15,12 @@ class Field:
     allow_none: bool = False
 
 
-Model = type[BaseModel]
+class Model(BaseModel):
+    pass
+
+
+class EmptyModel(BaseModel):
+    pass
 
 
 @dataclass
