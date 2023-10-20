@@ -11,8 +11,9 @@ class Field:
     """
     name: str
     type: type
-    default: Any = None
-    allow_none: bool = False
+    has_default: bool = False
+    default_value: Any = None
+    # allow_none: bool = False
 
 
 class Model(BaseModel):

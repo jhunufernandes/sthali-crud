@@ -1,6 +1,6 @@
 """Config functions.
 """
-from typing import Any, Callable
+from typing import Callable
 from .crud import CRUD
 from .schema import Schema
 from .types import ResourceCfg, ResourceSpec, RouteConfig
@@ -52,7 +52,7 @@ def config_router(resource_spec: ResourceSpec, schema: Schema, crud: CRUD) -> Re
             RouteConfig(
                 path='/',
                 endpoint=replace_type_hint(crud.update, ['resource'], model),
-                response_model=model,
+                response_model=model``,
                 methods=['PUT']),
             # RouteConfig(
             #     path='/{resource_id}/',
