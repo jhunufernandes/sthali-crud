@@ -1,22 +1,22 @@
 """Sthali CRUD client.
 """
 from fastapi import APIRouter, FastAPI
+from pydantic.dataclasses import dataclass
 from .config import config_router
 from .crud import CRUD
 from .db import DB
-from .helpers import ModelClass
-from .schema import Schema
-from .types import Field, Model, ResourceSpec
+from .schema import FieldDefinition, ResourceSpec, Schema
+from .types import Model
 
 
-class SthaliCRUD(ModelClass):
+class SthaliCRUD:
     """SthaliCRUD client
     """
     _app = FastAPI()
 
     def __init__(self, _resource_spec: ResourceSpec, _db: DB = DB()) -> None:
         _schema = Schema(_resource_spec.name, _resource_spec.fields)
-        _crud = CRUD(db=_db, model=_schema.model)
+        _crud = CRUD(db=_db, schema=_schema)
         _resource_cfg = config_router(_resource_spec, _schema, _crud)
         _router = APIRouter(prefix=_resource_cfg.prefix, tags=_resource_cfg.tags)
         for route in _resource_cfg.routes:
@@ -26,7 +26,6 @@ class SthaliCRUD(ModelClass):
                                   methods=route.methods,
                                   status_code=route.status_code)
         self._app.include_router(_router)
-        self._model = _schema.model
 
     @property
     def app(self) -> FastAPI:
@@ -40,7 +39,7 @@ class SthaliCRUD(ModelClass):
 
 __all__ = [
     'DB',
-    'Field',
+    'FieldDefinition',
     'Model',
     'ResourceSpec',
     'SthaliCRUD',

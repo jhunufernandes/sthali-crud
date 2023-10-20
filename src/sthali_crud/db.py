@@ -2,10 +2,10 @@
 """
 from typing import Any
 from fastapi import HTTPException
-from .helpers import ModelClass
+# from .helpers import ModelClass
 
 
-class DB(ModelClass):
+class DB:
     """Sthali CRUD DB main class.
     """
     class DBException(HTTPException):

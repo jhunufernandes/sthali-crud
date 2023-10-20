@@ -34,26 +34,31 @@ def config_router(resource_spec: ResourceSpec, schema: Schema, crud: CRUD) -> Re
         ResourceCfg: Resource configuration.
     """
 
-    model = schema.model
+    breakpoint()
     return ResourceCfg(
         prefix=f'/{resource_spec.name}',
         routes=[
             RouteConfig(
                 path='/',
-                endpoint=replace_type_hint(crud.create, ['resource'], model),
-                response_model=model,
+                endpoint=replace_type_hint(crud.create, ['resource'], schema.create_resource),
+                response_model=schema.create_resource,
                 methods=['POST'],
                 status_code=201),
             RouteConfig(
                 path='/{resource_id}/',
-                endpoint=replace_type_hint(crud.read, ['return'], model),
-                response_model=model,
+                endpoint=replace_type_hint(crud.read, ['return'], schema.read_resource),
+                response_model=schema.read_resource,
                 methods=['GET']),
             RouteConfig(
                 path='/',
-                endpoint=replace_type_hint(crud.update, ['resource'], model),
-                response_model=model``,
+                endpoint=replace_type_hint(crud.update, ['resource'], schema.update_resource),
+                response_model=schema.update_resource,
                 methods=['PUT']),
+            # RouteConfig(
+            #     path='/',
+            #     endpoint=replace_type_hint(crud.update, ['resource'], schema.upsert_resource),
+            #     response_model=schema.upsert_resource,
+            #     methods=['PUT']),
             # RouteConfig(
             #     path='/{resource_id}/',
             #     endpoint=crud.delete,
