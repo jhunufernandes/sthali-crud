@@ -1,19 +1,9 @@
-"""Methods for DB.
-"""
 from typing import Any
 from fastapi import HTTPException
-# from .helpers import ModelClass
 
 
 class DB:
-    """Sthali CRUD DB main class.
-    """
     class DBException(HTTPException):
-        """DB Exception.
-
-        Args:
-            HTTPException (Exception): FastAPI base Exception.
-        """
         detail: str
         status_code: int
 
@@ -31,5 +21,5 @@ class DB:
     def upsert(self, *args, **kwargs) -> Any:
         raise NotImplementedError
 
-    # def delete(self, *args, **kwargs) -> Any:
-    #     raise NotImplementedError
+    def delete(self, *args, **kwargs) -> Any:
+        raise NotImplementedError

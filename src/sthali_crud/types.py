@@ -1,54 +1,54 @@
 """Types.
 """
-from typing import Any, Callable, Literal, Optional
+from typing import Any, Callable, Literal
 from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
 
 
+# @dataclass
+# class RouteConfiguration:
+#     """Route Configuration.
+#     """
+#     path: str
+#     endpoint: Callable[..., Any]
+#     response_model: Any
+#     methods: list[Literal['GET', 'POST', 'PUT', 'PATCH', 'DELETE']] | None = None
+#     status_code: int = 200
+
+
+# @dataclass
+# class RouterConfiguration:
+#     """Router Configuration.
+#     """
+#     prefix: str
+#     routes: list[RouteConfiguration]
+#     tags: list[str]
+
+
 @dataclass
-class Field:
-    """Field.
+class ModelStrategy:
+    """Model strategy
+    """
+    create_input_model: type[BaseModel]
+    upsert_input_model: type[BaseModel]
+    update_input_model: type[BaseModel]
+    response_model: type[BaseModel]
+
+
+@dataclass
+class FieldDefinition:
+    """Field definition.
     """
     name: str
     type: type
     has_default: bool = False
     default_value: Any = None
-    # allow_none: bool = False
-
-
-class Model(BaseModel):
-    pass
-
-
-class EmptyModel(BaseModel):
-    pass
+    allow_none: bool = False
 
 
 @dataclass
-class ResourceSpec:
-    """Resource Specification.
+class ResourceSpecification:
+    """Resource specification.
     """
     name: str
-    fields: list[Field]
-
-
-@dataclass
-class RouteConfig:
-    """Route Configuration.
-    """
-    path: str
-    endpoint: Callable[..., Any]
-    response_model: Any
-    methods: Optional[
-        set[Literal['GET', 'POST', 'PUT', 'PATCH', 'DELETE']] | list[Literal['GET', 'POST', 'PUT', 'PATCH', 'DELETE']]
-    ] = None
-    status_code: int = 200
-
-
-@dataclass
-class ResourceCfg:
-    """Resource Configuration.
-    """
-    prefix: str
-    routes: list[RouteConfig]
-    tags: Optional[list[str]]
+    fields: list[FieldDefinition]

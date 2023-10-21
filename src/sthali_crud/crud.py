@@ -1,81 +1,23 @@
 """Methods for CRUD.
 """
-from typing import Callable
-from uuid import UUID
-from fastapi import HTTPException
-from pydantic import ValidationError
+from pydantic import BaseModel
 from .db import DB
-# from .helpers import ModelClass
-from .schema import BaseWithId, Base, Schema
-from .types import EmptyModel
-
-
+from .models import Models, CreateInputModel
 
 
 class CRUD:
-    """CRUD main class.
-    """
     _db: DB
-    # _deconstruct: Callable = lambda id=None, **rest: (id, rest)
+    _models: Models
 
-    class CRUDException(HTTPException):
-        """CRUD Exception.
-
-        Args:
-            HTTPException (Exception): FastAPI base Exception.
-        """
-        detail: str
-        status_code: int
-
-        def __init__(self, detail: str, status_code: int = 400) -> None:
-            self.detail = detail
-            self.status_code = status_code
-            super().__init__(status_code, detail)
-
-    def __init__(self, db: DB, schema: Schema) -> None:
+    def __init__(self, db: DB, models: Models) -> None:
         self._db = db
-        self._schema = schema
+        self._models = models
 
-    def _handle_crud_exception(self, exception: DB.DBException) -> None:
-        """Handle CRUD Exception.
+    @classmethod
+    def replace_model(cls, model: type[BaseModel]) -> None:
+        cls._model = model
 
-        Args:
-            exception (DB.DBException): Custom DB Exception.
-
-        Raises:
-            self.CRUDException: Custom CRUD Exception.
-        """
-        raise self.CRUDException(repr(exception)) from exception
-
-    async def _perform_crud(self, operation: Callable, resource: type[BaseWithId]) -> type[BaseWithId] | None:
-        try:
-            resource_id = resource.id
-            resource_obj = resource.model_dump()
-            return operation(resource_id=resource_id, resource_obj=resource_obj)
-        except DB.DBException as exception:
-            self._handle_crud_exception(exception)
-        except ValidationError as exception:
-            raise self.CRUDException(detail=exception.errors(), status_code=422) from exception
-
-    async def _upsert(self, resource: type[Base]) -> type[BaseWithId]:
-        return await self._perform_crud(self._db.upsert, resource=resource)
-
-    async def create(self, resource: type[Base]) -> type[BaseWithId]:
-        return await self._upsert(resource=resource)
-
-    async def read(self, resource_id: int) -> type[BaseWithId]:
-        return await self._perform_crud(self._db.read, resource_id=resource_id)
-
-    async def update(self, resource: type[BaseWithId]) -> type[BaseWithId]:
+    # def create(self, resource: type[BaseModel]) -> type[BaseModel]:
+    def create(self, resource: CreateInputModel):
         breakpoint()
-        resource_id, resource_obj = (lambda id=None, **rest: (id, rest))(**resource.model_dump())
-        # resource_obj = self.model(**resource_obj)
-        try:
-            assert resource_id
-        except AssertionError as exception:
-            breakpoint()
-            raise self.CRUDException(detail='id', status_code=422) from exception
-        return await self._upsert(resource_id=resource_id, resource_obj=resource_obj)
-
-    # async def delete(self, resource_id: int) -> None:
-    #     return await self._perform_crud(self._db.delete, resource_id=resource_id, validate=False)
+        return resource

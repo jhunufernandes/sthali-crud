@@ -1,9 +1,8 @@
-"""Config functions.
-"""
 from typing import Callable
-from .crud import CRUD
-from .schema import Schema
-from .types import ResourceCfg, ResourceSpec, RouteConfig
+
+# from .models import Models
+# from .crud import CRUD
+# from .types import ResourceConfiguration, ResourceSpecification
 
 
 def replace_type_hint(original_func: Callable, type_names: list[str], new_type: type) -> Callable:
@@ -22,47 +21,37 @@ def replace_type_hint(original_func: Callable, type_names: list[str], new_type: 
     return original_func
 
 
-def config_router(resource_spec: ResourceSpec, schema: Schema, crud: CRUD) -> ResourceCfg:
-    """Config router.
-
-    Args:
-        resource_spec (ResourceSpec): Resource specification.
-        schema (Schema): Schema.
-        crud (CRUD): CRUD.
-
-    Returns:
-        ResourceCfg: Resource configuration.
-    """
-    return ResourceCfg(
-        prefix=f'/{resource_spec.name}',
-        routes=[
-            RouteConfig(
-                path='/',
-                endpoint=replace_type_hint(crud.create, ['resource'], schema.create_resource_model),
-                response_model=schema.create_resource_model,
-                methods=['POST'],
-                status_code=201),
-            RouteConfig(
-                path='/{resource_id}/',
-                endpoint=replace_type_hint(crud.read, ['return'], schema.read_resource_model),
-                response_model=schema.read_resource_model,
-                methods=['GET']),
-            RouteConfig(
-                path='/',
-                endpoint=replace_type_hint(crud.update, ['resource'], schema.update_resource_model),
-                response_model=schema.update_resource_model,
-                methods=['PUT']),
-            # RouteConfig(
-            #     path='/',
-            #     endpoint=replace_type_hint(crud.update, ['resource'], schema.upsert_resource_model),
-            #     response_model=schema.upsert_resource_model,
-            #     methods=['PUT']),
-            # RouteConfig(
-            #     path='/{resource_id}/',
-            #     endpoint=crud.delete,
-            #     response_model=None,
-            #     methods=['DELETE'],
-            #     status_code=204)
-        ],
-        tags=[resource_spec.name]
-    )
+# def config_router(resource_spec: ResourceSpecification, models: Models, crud: CRUD) -> ResourceConfiguration:
+#     return ResourceConfiguration(
+#         prefix=f'/{resource_spec.name}',
+#         routes=[
+#             RouteConfiguration(
+#                 path='/',
+#                 endpoint=replace_type_hint(crud.create, ['resource'], schema.create_input_model),
+#                 response_model=schema.create_input_model,
+#                 methods=['POST'],
+#                 status_code=201),
+#             # RouteConfiguration(
+#             #     path='/{resource_id}/',
+#             #     endpoint=replace_type_hint(crud.read, ['return'], schema.read_resource_model),
+#             #     response_model=schema.read_resource_model,
+#             #     methods=['GET']),
+#             # RouteConfiguration(
+#             #     path='/',
+#             #     endpoint=replace_type_hint(crud.update, ['resource'], schema.update_resource_model),
+#             #     response_model=schema.update_resource_model,
+#             #     methods=['PUT']),
+#             # RouteConfiguration(
+#             #     path='/',
+#             #     endpoint=replace_type_hint(crud.update, ['resource'], schema.upsert_resource_model),
+#             #     response_model=schema.upsert_resource_model,
+#             #     methods=['PUT']),
+#             # RouteConfiguration(
+#             #     path='/{resource_id}/',
+#             #     endpoint=crud.delete,
+#             #     response_model=None,
+#             #     methods=['DELETE'],
+#             #     status_code=204)
+#         ],
+#         tags=[resource_spec.name]
+#     )

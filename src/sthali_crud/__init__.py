@@ -1,46 +1,37 @@
-"""Sthali CRUD client.
-"""
 from fastapi import APIRouter, FastAPI
-from pydantic.dataclasses import dataclass
-from .config import config_router
+from .config import replace_type_hint
 from .crud import CRUD
 from .db import DB
-from .schema import FieldDefinition, ResourceSpec, Schema
-from .types import Model
+from .models import Models
+from .types import FieldDefinition, ResourceSpecification
 
 
 class SthaliCRUD:
-    """SthaliCRUD client
-    """
     _app = FastAPI()
-
-    def __init__(self, _resource_spec: ResourceSpec, _db: DB = DB()) -> None:
-        _schema = Schema(_resource_spec.name, _resource_spec.fields)
-        _crud = CRUD(db=_db, schema=_schema)
-        _resource_cfg = config_router(_resource_spec, _schema, _crud)
-        _router = APIRouter(prefix=_resource_cfg.prefix, tags=_resource_cfg.tags)
-        for route in _resource_cfg.routes:
-            _router.add_api_route(path=route.path,
-                                  endpoint=route.endpoint,
-                                  response_model=route.response_model,
-                                  methods=route.methods,
-                                  status_code=route.status_code)
-        self._app.include_router(_router)
 
     @property
     def app(self) -> FastAPI:
-        """App property.
-
-        Returns:
-            FastAPI: Fastapi client.
-        """
         return self._app
+
+    def __init__(self, resource_spec: ResourceSpecification, db: DB) -> None:
+        _models: Models = Models(resource_spec)
+        _crud: CRUD = CRUD(db=db, models=_models)
+        # _crud.replace_model(_models.create_input_model)
+        # _router_cfg: RouterConfiguration = config_router(resource_spec=resource_spec, models=_models, crud=_crud)
+        _router = APIRouter(prefix=f'/{resource_spec.name}', tags=[resource_spec.name])
+        _router.add_api_route(
+            path='/',
+            endpoint=replace_type_hint(_crud.create, ['resource'], _models.create_input_model),
+            response_model=_models.response_model,
+            methods=['POST'],
+            status_code=201)
+
+        self._app.include_router(_router)
 
 
 __all__ = [
     'DB',
     'FieldDefinition',
-    'Model',
-    'ResourceSpec',
+    'ResourceSpecification',
     'SthaliCRUD',
 ]
