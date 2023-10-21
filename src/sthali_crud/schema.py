@@ -47,33 +47,33 @@ STRATEGY_BASE_MODEL = {
 class Schema:
     """Schema main class.
     """
-    _create_resource: Type[Base]
-    _read_resource: Type[Base]
-    _update_resource: Type[Base]
-    _upsert_resource: Type[Base]
+    _create_resource_model: Type[Base]
+    _read_resource_model: Type[Base]
+    _update_resource_model: Type[Base]
+    _upsert_resource_model: Type[Base]
 
     def __init__(self, name: str, fields: list[FieldDefinition]) -> None:
         for strategy, strategy_model in STRATEGY_BASE_MODEL.items():
-            _model_name: str = f'_{strategy.lower}_{name.lower()}'
+            _model_name: str = f'_{strategy.lower()}_resource_model'
             _model_definition: Type[Base] = self.create_model(base=strategy_model, name=f'{strategy}{name.title()}',
                                                               fields=fields, strategy=strategy)  # type: ignore
             self.__setattr__(_model_name, _model_definition)
 
     @property
-    def create_resource(self) -> type[Base]:
-        return self._create_resource
+    def create_resource_model(self) -> type[Base]:
+        return self._create_resource_model
 
     @property
-    def read_resource(self) -> type[Base]:
-        return self._read_resource
+    def read_resource_model(self) -> type[Base]:
+        return self._read_resource_model
 
     @property
-    def update_resource(self) -> type[Base]:
-        return self._update_resource
+    def update_resource_model(self) -> type[Base]:
+        return self._update_resource_model
 
     @property
-    def upsert_resource(self) -> type[Base]:
-        return self._upsert_resource
+    def upsert_resource_model(self) -> type[Base]:
+        return self._upsert_resource_model
 
     @staticmethod
     def create_model(base: Type[Base], name: str, fields: list[FieldDefinition],

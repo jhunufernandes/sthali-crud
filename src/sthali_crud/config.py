@@ -33,31 +33,29 @@ def config_router(resource_spec: ResourceSpec, schema: Schema, crud: CRUD) -> Re
     Returns:
         ResourceCfg: Resource configuration.
     """
-
-    breakpoint()
     return ResourceCfg(
         prefix=f'/{resource_spec.name}',
         routes=[
             RouteConfig(
                 path='/',
-                endpoint=replace_type_hint(crud.create, ['resource'], schema.create_resource),
-                response_model=schema.create_resource,
+                endpoint=replace_type_hint(crud.create, ['resource'], schema.create_resource_model),
+                response_model=schema.create_resource_model,
                 methods=['POST'],
                 status_code=201),
             RouteConfig(
                 path='/{resource_id}/',
-                endpoint=replace_type_hint(crud.read, ['return'], schema.read_resource),
-                response_model=schema.read_resource,
+                endpoint=replace_type_hint(crud.read, ['return'], schema.read_resource_model),
+                response_model=schema.read_resource_model,
                 methods=['GET']),
             RouteConfig(
                 path='/',
-                endpoint=replace_type_hint(crud.update, ['resource'], schema.update_resource),
-                response_model=schema.update_resource,
+                endpoint=replace_type_hint(crud.update, ['resource'], schema.update_resource_model),
+                response_model=schema.update_resource_model,
                 methods=['PUT']),
             # RouteConfig(
             #     path='/',
-            #     endpoint=replace_type_hint(crud.update, ['resource'], schema.upsert_resource),
-            #     response_model=schema.upsert_resource,
+            #     endpoint=replace_type_hint(crud.update, ['resource'], schema.upsert_resource_model),
+            #     response_model=schema.upsert_resource_model,
             #     methods=['PUT']),
             # RouteConfig(
             #     path='/{resource_id}/',
