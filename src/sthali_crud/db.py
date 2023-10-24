@@ -1,25 +1,35 @@
 from typing import Any
-from fastapi import HTTPException
+from fastapi import status
+from .exceptions import SthaliCRUDException
 
 
 class DB:
-    class DBException(HTTPException):
-        detail: str
-        status_code: int
+    """CRUD DB main class.
 
-        def __init__(self, detail: str, status_code: int = 400) -> None:
-            self.detail = detail
-            self.status_code = status_code
-            super().__init__(status_code, detail)
+    Raises:
+        DB.DBException: 'Not implemented'.
+    """
+    class DBException(SthaliCRUDException):
+        def __init__(self) -> None:
+            super().__init__('Not implemented', status.HTTP_501_NOT_IMPLEMENTED)
 
-    def read(self, *args, **kwargs) -> Any:
-        raise NotImplementedError
+    async def create(self, *args, **kwargs) -> Any:
+        raise DB.DBException()
 
-    def update(self, *args, **kwargs) -> Any:
-        raise NotImplementedError
+    async def read(self, *args, **kwargs) -> Any:
+        raise DB.DBException()
 
-    def upsert(self, *args, **kwargs) -> Any:
-        raise NotImplementedError
+    async def update(self, *args, **kwargs) -> Any:
+        raise DB.DBException()
 
-    def delete(self, *args, **kwargs) -> Any:
-        raise NotImplementedError
+    async def delete(self, *args, **kwargs) -> Any:
+        raise DB.DBException()
+
+    async def upsert(self, *args, **kwargs) -> Any:
+        raise DB.DBException()
+
+    async def read_all(self, *args, **kwargs) -> Any:
+        raise DB.DBException()
+
+    async def delete_all(self, *args, **kwargs) -> Any:
+        raise DB.DBException()
