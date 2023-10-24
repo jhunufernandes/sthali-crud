@@ -11,6 +11,3 @@ venv.bak/
 __pycache__/
 
 dist/
-
-# Vscode
-.vscode/

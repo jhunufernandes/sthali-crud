@@ -1,4 +1,5 @@
 from fastapi import APIRouter, FastAPI
+
 from .config import Config
 from .crud import CRUD
 from .db import DB
@@ -7,8 +8,8 @@ from .types import FieldDefinition, ResourceSpecification
 
 
 class SthaliCRUD:
-    """SthaliCRUD main class.
-    """
+    """SthaliCRUD main class."""
+
     _app: FastAPI = FastAPI()
     _db: DB
 
@@ -43,20 +44,14 @@ class SthaliCRUD:
                 endpoint=_route.endpoint,
                 response_model=_route.response_model,
                 methods=_route.methods,
-                status_code=_route.status_code)
-        _router.add_api_route(
-            path='/',
-            endpoint=lambda: {'resource': _router_cfg.prefix})
+                status_code=_route.status_code,
+            )
         self._app.include_router(_router)
-        self.app.add_api_route(
-            path='/',
-            endpoint=lambda: {'msg': 'Hello world'}
-        )
 
 
 __all__ = [
-    'DB',
-    'FieldDefinition',
-    'ResourceSpecification',
-    'SthaliCRUD',
+    "DB",
+    "FieldDefinition",
+    "ResourceSpecification",
+    "SthaliCRUD",
 ]

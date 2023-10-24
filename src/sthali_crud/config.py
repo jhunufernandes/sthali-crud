@@ -1,28 +1,24 @@
-from typing import Any, Callable
-from .models import Models
+from typing import Callable
+
 from .crud import CRUD
+from .models import Models
 from .types import ResourceSpecification, RouteConfiguration, RouterConfiguration
 
 
 class Config:
-    """Config main class.
-    """
-    _router_cfg: RouterConfiguration
+    """Config main class."""
 
-    def __init__(self, crud: CRUD, models: Models, resource_spec: ResourceSpecification) -> None:
-        self._router_cfg = self.config_router(crud, models, resource_spec)
+    router_cfg: RouterConfiguration
 
-    @property
-    def router_cfg(self) -> RouterConfiguration:
-        """router_cfg property.
-
-        Returns:
-            RouterConfiguration: API routes definition.
-        """
-        return self._router_cfg
+    def __init__(
+        self, crud: CRUD, models: Models, resource_spec: ResourceSpecification
+    ) -> None:
+        self.router_cfg = self.config_router(crud, models, resource_spec)
 
     @staticmethod
-    def replace_type_hint(original_func: Callable, type_name: str, new_type: type) -> Callable:
+    def replace_type_hint(
+        original_func: Callable, type_name: str, new_type: type
+    ) -> Callable:
         """Replace type hint annotations.
 
         Args:
@@ -38,7 +34,9 @@ class Config:
         return original_func
 
     @staticmethod
-    def config_router(crud: CRUD, models: Models, resource_spec: ResourceSpecification) -> RouterConfiguration:
+    def config_router(
+        crud: CRUD, models: Models, resource_spec: ResourceSpecification
+    ) -> RouterConfiguration:
         """Parse spec and generate routes.
 
         Args:
@@ -50,35 +48,46 @@ class Config:
             RouterConfiguration: API routes definition.
         """
         return RouterConfiguration(
-            prefix=f'/{resource_spec.name}',
+            prefix=f"/{resource_spec.name}",
             routes=[
                 RouteConfiguration(
-                    path='/',
-                    endpoint=Config.replace_type_hint(crud.create, 'resource', models.create_model),
+                    path="/",
+                    endpoint=Config.replace_type_hint(
+                        crud.create, "resource", models.create_model
+                    ),
                     response_model=models.response_model,
-                    methods=['POST'],
-                    status_code=201),
+                    methods=["POST"],
+                    status_code=201,
+                ),
                 RouteConfiguration(
-                    path='/{resource_id}/',
+                    path="/{resource_id}/",
                     endpoint=crud.read,
                     response_model=models.response_model,
-                    methods=['GET']),
+                    methods=["GET"],
+                ),
                 RouteConfiguration(
-                    path='/',
-                    endpoint=Config.replace_type_hint(crud.update, 'resource', models.update_model),
+                    path="/",
+                    endpoint=Config.replace_type_hint(
+                        crud.update, "resource", models.update_model
+                    ),
                     response_model=models.response_model,
-                    methods=['PUT']),
+                    methods=["PUT"],
+                ),
                 RouteConfiguration(
-                    path='/{resource_id}/',
-                    endpoint=Config.replace_type_hint(crud.update, 'resource', models.update_model),
+                    path="/{resource_id}/",
+                    endpoint=Config.replace_type_hint(
+                        crud.update, "resource", models.update_model
+                    ),
                     response_model=models.response_model,
-                    methods=['PUT']),
+                    methods=["PUT"],
+                ),
                 RouteConfiguration(
-                    path='/{resource_id}/',
+                    path="/{resource_id}/",
                     endpoint=crud.delete,
                     response_model=None,
-                    methods=['DELETE'],
-                    status_code=204),
+                    methods=["DELETE"],
+                    status_code=204,
+                ),
             ],
-            tags=[resource_spec.name]
+            tags=[resource_spec.name],
         )

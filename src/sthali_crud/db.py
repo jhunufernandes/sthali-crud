@@ -1,5 +1,7 @@
 from typing import Any
+
 from fastapi import status
+
 from .exceptions import SthaliCRUDException
 
 
@@ -9,9 +11,10 @@ class DB:
     Raises:
         DB.DBException: 'Not implemented'.
     """
+
     class DBException(SthaliCRUDException):
         def __init__(self) -> None:
-            super().__init__('Not implemented', status.HTTP_501_NOT_IMPLEMENTED)
+            super().__init__("Not implemented", status.HTTP_501_NOT_IMPLEMENTED)
 
     async def create(self, *args, **kwargs) -> Any:
         raise DB.DBException()

@@ -1,46 +1,32 @@
 from pydantic import BaseModel, create_model
-from .types import FieldDefinition, ResourceSpecification
-from .types import ModelStrategy, CreateModel, ResponseModel, UpdateModel, UpsertModel
+
+from .types import (
+    CreateModel,
+    FieldDefinition,
+    ModelStrategy,
+    ResourceSpecification,
+    ResponseModel,
+    UpdateModel,
+    UpsertModel,
+)
 
 
 class Models:
-    """Models main class.
-    """
-    _create_model: type[CreateModel]
-    _response_model: type[ResponseModel]
-    _update_model: type[UpdateModel]
-    _upsert_model: type[UpsertModel]
+    """Models main class."""
+
+    resource: str
+    create_model: type[CreateModel]
+    response_model: type[ResponseModel]
+    update_model: type[UpdateModel]
+    upsert_model: type[UpsertModel]
 
     def __init__(self, resource_spec: ResourceSpecification) -> None:
+        self._resource = resource_spec.name
         _model_strategy = self.resolve_spec(resource_spec)
-        self._create_model = _model_strategy.create_model
-        self._response_model = _model_strategy.response_model
-        self._update_model = _model_strategy.update_model
-        self._upsert_model = _model_strategy.upsert_model
-
-    @property
-    def create_model(self) -> type[CreateModel]:
-        """create_model property.
-        """
-        return self._create_model
-
-    @property
-    def response_model(self) -> type[ResponseModel]:
-        """response_model property.
-        """
-        return self._response_model
-
-    @property
-    def update_model(self) -> type[UpdateModel]:
-        """update_model property.
-        """
-        return self._update_model
-
-    @property
-    def upsert_model(self) -> type[UpsertModel]:
-        """upsert_model property.
-        """
-        return self._upsert_model
+        self.create_model = _model_strategy.create_model
+        self.response_model = _model_strategy.response_model
+        self.update_model = _model_strategy.update_model
+        self.upsert_model = _model_strategy.upsert_model
 
     @staticmethod
     def define_model(base: type[BaseModel], name: str, fields: list[FieldDefinition]):
@@ -75,20 +61,22 @@ class Models:
         """
         _create_input_model = Models.define_model(
             base=CreateModel,
-            name=f'Create{resource_spec.name.title()}',
-            fields=resource_spec.fields)
+            name=f"Create{resource_spec.name.title()}",
+            fields=resource_spec.fields,
+        )
         _response_model = Models.define_model(
             base=ResponseModel,
-            name=f'Response{resource_spec.name.title()}',
-            fields=resource_spec.fields)
+            name=f"Response{resource_spec.name.title()}",
+            fields=resource_spec.fields,
+        )
         _update_input_model = Models.define_model(
             base=UpdateModel,
-            name=f'Update{resource_spec.name.title()}',
-            fields=resource_spec.fields)
+            name=f"Update{resource_spec.name.title()}",
+            fields=resource_spec.fields,
+        )
         _upsert_input_model = Models.define_model(
-            base=UpsertModel,
-            name=f'Upsert{resource_spec.name.title()}',
-            fields=[])
+            base=UpsertModel, name=f"Upsert{resource_spec.name.title()}", fields=[]
+        )
         return ModelStrategy(
             create_model=_create_input_model,
             response_model=_response_model,
