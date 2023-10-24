@@ -35,8 +35,9 @@ jobs:
           python -m pytest
 
       - name: Build package
-        run: pip install build
-        run: python -m build
+        run: |
+          pip install build
+          run: python -m build
 
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@release/v1
