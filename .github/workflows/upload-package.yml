@@ -31,8 +31,8 @@ jobs:
 
       - name: Testing
         run: |
-          pip install pytest
-          python -m pytest httpx
+          pip install pytest httpx
+          python -m pytest
 
       - name: Build package
         run: pip install build
