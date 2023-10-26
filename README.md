@@ -1,14 +1,18 @@
 # sthali-crud
 
 <p align="center">
+    <a href="docs/images/sthali-crud.svg"><img src="docs/images/sthali-crud.svg" alt="SthaliCRUD" height=500></a>
+</p>
+
+<p align="center">
     <a href="https://pypi.org/project/sthali-crud" target="_blank">
-        <img src="https://img.shields.io/pypi/v/sthali-crud?&label=Version" alt="Package version">
+        <img src="https://img.shields.io/pypi/v/sthali-crud?label=Version&color=%232EBC4F" alt="Package version">
     </a>
     <a href="https://pypi.org/project/sthali-crud" target="_blank">
-        <img src="https://img.shields.io/pypi/pyversions/sthali-crud.svg?&label=Python" alt="Supported Python versions">
+        <img src="https://img.shields.io/pypi/pyversions/sthali-crud.svg?label=Python&color=%232EBC4F" alt="Supported Python versions">
     </a>
     <a href="https://pypi.org/project/sthali-crud" target="_blank">
-        <img src="https://img.shields.io/github/license/jhunufernandes/sthali-crud?&label=License" alt="License">
+        <img src="https://img.shields.io/github/license/jhunufernandes/sthali-crud?label=License&color=%232EBC4F" alt="License">
     </a>
     <a href="https://github.com/jhunufernandes/sthali-crud/actions/workflows/test-package.yml" target="_blank">
         <img src="https://github.com/jhunufernandes/sthali-crud/actions/workflows/test-package.yml/badge.svg" alt="Tests">
@@ -17,7 +21,6 @@
         <img src="https://github.com/jhunufernandes/sthali-crud/actions/workflows/upload-package.yml/badge.svg" alt="Build">
     </a>
 </p>
-
 
 ---
 
