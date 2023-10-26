@@ -1,7 +1,6 @@
-# sthali-crud
-
 <p align="center">
-    <a href="docs/images/sthali-crud.svg"><img src="docs/images/sthali-crud.svg" alt="SthaliCRUD" height=500></a>
+    <a href="docs/images/crud.svg"><img src="docs/images/crud.svg" alt="SthaliCRUD" height=720></a>
+    <em>Made for microsservices, build with FastAPI, easy to setup, fast to use, ready for deploy</em>
 </p>
 
 <p align="center">
