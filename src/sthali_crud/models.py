@@ -1,59 +1,50 @@
+from uuid import UUID
+
 from pydantic import BaseModel, create_model
-from .types import FieldDefinition, ResourceSpecification
-from .types import ModelStrategy, CreateModel, ResponseModel, UpdateModel, UpsertModel
+
+from src.sthali_crud.types import FieldDefinition
+
+
+class Base(BaseModel):
+    pass
+
+
+class BaseWithId(Base):
+    id: UUID
+
+
+class BaseWithIdOptional(Base):
+    id: UUID | None = None
+
+
+class BaseWithStrId(Base):
+    id: str
 
 
 class Models:
-    """Models main class.
-    """
-    _create_model: type[CreateModel]
-    _response_model: type[ResponseModel]
-    _update_model: type[UpdateModel]
-    _upsert_model: type[UpsertModel]
+    name: str
 
-    def __init__(self, resource_spec: ResourceSpecification) -> None:
-        _model_strategy = self.resolve_spec(resource_spec)
-        self._create_model = _model_strategy.create_model
-        self._response_model = _model_strategy.response_model
-        self._update_model = _model_strategy.update_model
-        self._upsert_model = _model_strategy.upsert_model
+    create_model: type[BaseModel]
+    response_model: type[BaseModel]
+    update_model: type[BaseModel]
 
-    @property
-    def create_model(self) -> type[CreateModel]:
-        """create_model property.
-        """
-        return self._create_model
-
-    @property
-    def response_model(self) -> type[ResponseModel]:
-        """response_model property.
-        """
-        return self._response_model
-
-    @property
-    def update_model(self) -> type[UpdateModel]:
-        """update_model property.
-        """
-        return self._update_model
-
-    @property
-    def upsert_model(self) -> type[UpsertModel]:
-        """upsert_model property.
-        """
-        return self._upsert_model
+    def __init__(self, name: str, fields: list[FieldDefinition]) -> None:
+        self.name = name
+        self.create_model = self.define_model(Base, f"Create{name.title()}", fields)
+        self.response_model = self.define_model(
+            BaseWithStrId, f"Response{name.title()}", fields
+        )
+        self.update_model = self.define_model(
+            BaseWithId, f"Update{name.title()}", fields
+        )
+        self.upsert_model = self.define_model(
+            BaseWithIdOptional, f"Upsert{name.title()}", fields
+        )
 
     @staticmethod
-    def define_model(base: type[BaseModel], name: str, fields: list[FieldDefinition]):
-        """Get field definition and apply on create_model().
-
-        Args:
-            base (type[BaseModel]): BaseModel for create_model().
-            name (str): Model name.
-            fields (list[FieldDefinition]): List of field definition.
-
-        Returns:
-            _type_: Model created.
-        """
+    def define_model(
+        base: type[BaseModel], name: str, fields: list[FieldDefinition]
+    ) -> type[BaseModel]:
         _fields_constructor = {}
         for _field in fields:
             _field_name = _field.name
@@ -62,36 +53,3 @@ class Models:
             _fields_constructor[_field_name] = (_field_type, _field_default_value)
 
         return create_model(__model_name=name, __base__=base, **_fields_constructor)
-
-    @staticmethod
-    def resolve_spec(resource_spec: ResourceSpecification) -> ModelStrategy:
-        """Resolve resource specification and apply on define_model().
-
-        Args:
-            resource_spec (ResourceSpecification): Resource specification.
-
-        Returns:
-            ModelStrategy: Models defined by route strategy.
-        """
-        _create_input_model = Models.define_model(
-            base=CreateModel,
-            name=f'Create{resource_spec.name.title()}',
-            fields=resource_spec.fields)
-        _response_model = Models.define_model(
-            base=ResponseModel,
-            name=f'Response{resource_spec.name.title()}',
-            fields=resource_spec.fields)
-        _update_input_model = Models.define_model(
-            base=UpdateModel,
-            name=f'Update{resource_spec.name.title()}',
-            fields=resource_spec.fields)
-        _upsert_input_model = Models.define_model(
-            base=UpsertModel,
-            name=f'Upsert{resource_spec.name.title()}',
-            fields=[])
-        return ModelStrategy(
-            create_model=_create_input_model,
-            response_model=_response_model,
-            update_model=_update_input_model,
-            upsert_model=_upsert_input_model,
-        )

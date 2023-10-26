@@ -1,35 +1,24 @@
-from typing import Any
-from fastapi import status
-from .exceptions import SthaliCRUDException
+from uuid import UUID
+
+from src.sthali_crud.db_engines import AVAILABLE_ENGINES, DBEngine
+from src.sthali_crud.db_engines.base import BaseEngine
 
 
-class DB:
-    """CRUD DB main class.
+class DB(DBEngine):
+    engine: type[BaseEngine]
+    table: str
 
-    Raises:
-        DB.DBException: 'Not implemented'.
-    """
-    class DBException(SthaliCRUDException):
-        def __init__(self) -> None:
-            super().__init__('Not implemented', status.HTTP_501_NOT_IMPLEMENTED)
+    def __init__(self, engine: AVAILABLE_ENGINES, table: str) -> None:
+        super().__init__(engine, table)
 
-    async def create(self, *args, **kwargs) -> Any:
-        raise DB.DBException()
+    async def create(self, resource_id: UUID, resource_obj: dict, *args, **kwargs) -> dict:
+        return await self.db_insert_one(resource_id=resource_id, resource_obj=resource_obj)
 
-    async def read(self, *args, **kwargs) -> Any:
-        raise DB.DBException()
+    async def read(self, resource_id: UUID, *args, **kwargs) -> dict:
+        return await self.db_select_one(resource_id=resource_id)
 
-    async def update(self, *args, **kwargs) -> Any:
-        raise DB.DBException()
+    async def update(self, resource_id: UUID, resource_obj: dict, *args, **kwargs) -> dict:
+        return await self.db_update_one(resource_id=resource_id, resource_obj=resource_obj)
 
-    async def delete(self, *args, **kwargs) -> Any:
-        raise DB.DBException()
-
-    async def upsert(self, *args, **kwargs) -> Any:
-        raise DB.DBException()
-
-    async def read_all(self, *args, **kwargs) -> Any:
-        raise DB.DBException()
-
-    async def delete_all(self, *args, **kwargs) -> Any:
-        raise DB.DBException()
+    async def delete(self, resource_id: UUID, *args, **kwargs) -> None:
+        return await self.db_delete_one(resource_id=resource_id)
