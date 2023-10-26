@@ -1,9 +1,7 @@
 <p align="center">
-    <a href="docs/images/crud.svg"><img src="docs/images/crud.svg" alt="SthaliCRUD" height=720></a>
-    <em>Made for microsservices, build with FastAPI, easy to setup, fast to use, ready for deploy</em>
-</p>
-
-<p align="center">
+    <a href="docs/images/crud.svg">
+        <img src="docs/images/crud.svg" alt="SthaliCRUD" height=720>
+    </a>
     <a href="https://pypi.org/project/sthali-crud" target="_blank">
         <img src="https://img.shields.io/pypi/v/sthali-crud?label=Version&color=%232EBC4F" alt="Package version">
     </a>
