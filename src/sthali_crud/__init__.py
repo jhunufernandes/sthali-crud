@@ -1,57 +1,34 @@
 from fastapi import APIRouter, FastAPI
 
-from .config import Config
-from .crud import CRUD
-from .db import DB
-from .models import Models
-from .types import FieldDefinition, ResourceSpecification
+from src.sthali_crud.config import config_router
+from src.sthali_crud.crud import CRUD
+from src.sthali_crud.db import DB
+from src.sthali_crud.models import Models
+from src.sthali_crud.types import AppSpecification
 
 
 class SthaliCRUD:
-    """SthaliCRUD main class."""
+    app: FastAPI = FastAPI()
 
-    _app: FastAPI = FastAPI()
-    _db: DB
-
-    @property
-    def app(self) -> FastAPI:
-        """app property.
-
-        Returns:
-            FastAPI: FastAPI client.
-        """
-        return self._app
-
-    @property
-    def db(self) -> DB:
-        """db property.
-
-        Returns:
-            FastAPI: FastAPI client.
-        """
-        return self._db
-
-    def __init__(self, db: DB, resource_spec: ResourceSpecification) -> None:
-        self._db = db
-        _models = Models(resource_spec)
-        _crud = CRUD(db, _models)
-        _config = Config(_crud, _models, resource_spec)
-        _router_cfg = _config.router_cfg
-        _router = APIRouter(prefix=_router_cfg.prefix, tags=_router_cfg.tags)
-        for _route in _router_cfg.routes:
-            _router.add_api_route(
-                path=_route.path,
-                endpoint=_route.endpoint,
-                response_model=_route.response_model,
-                methods=_route.methods,
-                status_code=_route.status_code,
-            )
-        self._app.include_router(_router)
+    def __init__(self, app_spec: AppSpecification) -> None:
+        for resource in app_spec.resources:
+            models = Models(resource.name, resource.fields)
+            db = DB(resource.db_engine, resource.name)
+            crud = CRUD(db, models)
+            router_cfg = config_router(crud, models, resource)
+            router = APIRouter(prefix=router_cfg.prefix, tags=router_cfg.tags)
+            for route in router_cfg.routes:
+                router.add_api_route(
+                    path=route.path,
+                    endpoint=route.endpoint,
+                    response_model=route.response_model,
+                    methods=route.methods,
+                    status_code=route.status_code,
+                )
+            self.app.include_router(router)
 
 
 __all__ = [
-    "DB",
-    "FieldDefinition",
-    "ResourceSpecification",
+    "AppSpecification",
     "SthaliCRUD",
 ]

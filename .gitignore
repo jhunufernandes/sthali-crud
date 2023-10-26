@@ -11,3 +11,9 @@ venv.bak/
 __pycache__/
 
 dist/
+
+# VSCode
+.vscode/
+
+# TinyDB
+tinydb.json
