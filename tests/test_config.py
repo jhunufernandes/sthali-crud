@@ -23,7 +23,7 @@ class TestConfig(TestCase):
         assert _result.__annotations__['x'] == str
 
     def test_config_router(self) -> None:
-        result = config_router(self.crud, self.models, RESOURCE_SPEC)
+        result = config_router(self.crud, RESOURCE_SPEC.name, self.models)
         assert isinstance(result, RouterConfiguration)
         assert result.prefix == "/people"
         assert isinstance(result.routes[0], RouteConfiguration)
