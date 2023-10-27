@@ -15,7 +15,7 @@ class SthaliCRUD:
             models = Models(resource.name, resource.fields)
             db = DB(resource.db_engine, resource.name)
             crud = CRUD(db, models)
-            router_cfg = config_router(crud, models, resource)
+            router_cfg = config_router(crud, resource.name, models)
             router = APIRouter(prefix=router_cfg.prefix, tags=router_cfg.tags)
             for route in router_cfg.routes:
                 router.add_api_route(

@@ -11,7 +11,7 @@ class FieldDefinition:
 
     name: str
     type: type
-    has_default: bool = False
+    has_default: bool = False  # needed only if default_value is None
     default_value: Any = None
     allow_none: bool = False
 

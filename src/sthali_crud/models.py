@@ -23,7 +23,6 @@ class BaseWithStrId(Base):
 
 class Models:
     name: str
-
     create_model: type[BaseModel]
     response_model: type[BaseModel]
     update_model: type[BaseModel]
@@ -45,11 +44,10 @@ class Models:
     def define_model(
         base: type[BaseModel], name: str, fields: list[FieldDefinition]
     ) -> type[BaseModel]:
-        _fields_constructor = {}
-        for _field in fields:
-            _field_name = _field.name
-            _field_default_value = (..., _field.default_value)[_field.has_default]
-            _field_type = (_field.type, _field.type | None)[_field.allow_none]
-            _fields_constructor[_field_name] = (_field_type, _field_default_value)
+        fields_constructor = {}
+        for field in fields:
+            field_default_value = (..., field.default_value)[field.default_value or field.has_default]
+            field_type = (field.type, field.type | None)[field.allow_none]
+            fields_constructor[field.name] = (field_type, field_default_value)
 
-        return create_model(__model_name=name, __base__=base, **_fields_constructor)
+        return create_model(__model_name=name, __base__=base, **fields_constructor)

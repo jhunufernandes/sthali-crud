@@ -2,11 +2,7 @@ from typing import Callable
 
 from src.sthali_crud.crud import CRUD
 from src.sthali_crud.models import Models
-from src.sthali_crud.types import (
-    ResourceSpecification,
-    RouteConfiguration,
-    RouterConfiguration,
-)
+from src.sthali_crud.types import RouteConfiguration, RouterConfiguration
 
 
 def replace_type_hint(
@@ -17,11 +13,9 @@ def replace_type_hint(
     return original_func
 
 
-def config_router(
-    crud: CRUD, models: Models, resource_spec: ResourceSpecification
-) -> RouterConfiguration:
+def config_router(crud: CRUD, name: str, models: Models) -> RouterConfiguration:
     return RouterConfiguration(
-        prefix=f"/{resource_spec.name}",
+        prefix=f"/{name}",
         routes=[
             RouteConfiguration(
                 path="/",
@@ -62,5 +56,5 @@ def config_router(
                 status_code=204,
             ),
         ],
-        tags=[resource_spec.name],
+        tags=[name],
     )
