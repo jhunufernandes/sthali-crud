@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from sthali_crud.config import config_router, replace_type_hint
+from src.sthali_crud.config import config_router, replace_type_hint
 from tests import (
     RESOURCE_SPEC,
     MockCRUD,

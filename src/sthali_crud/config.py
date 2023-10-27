@@ -1,8 +1,8 @@
 from typing import Callable
 
-from sthali_crud.crud import CRUD
-from sthali_crud.models import Models
-from sthali_crud.types import RouteConfiguration, RouterConfiguration
+from .crud import CRUD
+from .models import Models
+from .types import RouteConfiguration, RouterConfiguration
 
 
 def replace_type_hint(

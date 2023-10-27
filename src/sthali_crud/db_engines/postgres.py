@@ -1,4 +1,4 @@
-from sthali_crud.db_engines.base import BaseEngine
+from .base import BaseEngine
 
 
 class PostgresEngine(BaseEngine):

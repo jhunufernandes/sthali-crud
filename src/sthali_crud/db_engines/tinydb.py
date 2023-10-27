@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import HTTPException, status
 from tinydb import Query, TinyDB
 
-from sthali_crud.db_engines.base import BaseEngine
+from .base import BaseEngine
 
 TINYDB_PATH = path.join(path.dirname(__file__), "../../../tinydb.json")
 
