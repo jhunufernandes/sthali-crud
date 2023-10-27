@@ -1,4 +1,4 @@
-from typing import Any, Literal
+from typing import Any
 
 from .base import BaseEngine
 from .postgres import PostgresEngine
@@ -29,3 +29,6 @@ class DBEngine:
 
     async def db_delete_one(self, *args, **kwargs) -> Any:
         return await self.engine.db_delete_one(*args, **kwargs)
+
+    async def db_select_all(self, *args, **kwargs) -> Any:
+        return await self.engine.db_select_all(*args, **kwargs)

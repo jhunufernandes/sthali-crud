@@ -13,3 +13,6 @@ class BaseEngine:
 
     async def db_delete_one(self, *args, **kwargs) -> Any:
         return Any
+
+    async def db_select_all(self, *args, **kwargs) -> Any:
+        return Any
