@@ -1,8 +1,8 @@
 from unittest.mock import AsyncMock
 
-from src.sthali_crud.crud import CRUD
-from src.sthali_crud.models import Models
-from src.sthali_crud.types import (
+from sthali_crud.crud import CRUD
+from sthali_crud.models import Models
+from sthali_crud.types import (
     FieldDefinition,
     ResourceSpecification,
     RouteConfiguration,

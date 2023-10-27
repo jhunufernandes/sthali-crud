@@ -1,5 +1,5 @@
 from unittest import TestCase
-from src.sthali_crud.models import Base, Models
+from sthali_crud.models import Base, Models
 from tests import RESOURCE_SPEC
 
 

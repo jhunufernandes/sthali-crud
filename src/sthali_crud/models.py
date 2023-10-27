@@ -2,7 +2,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, create_model
 
-from src.sthali_crud.types import FieldDefinition
+from sthali_crud.types import FieldDefinition
 
 
 class Base(BaseModel):

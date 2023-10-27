@@ -2,7 +2,7 @@ from typing import Any, Callable, Literal
 
 from pydantic.dataclasses import dataclass
 
-from src.sthali_crud.db_engines import AVAILABLE_ENGINES
+from sthali_crud.db_engines import AVAILABLE_ENGINES
 
 
 @dataclass

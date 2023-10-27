@@ -1,8 +1,8 @@
 from typing import Any, Literal
 
-from src.sthali_crud.db_engines.base import BaseEngine
-from src.sthali_crud.db_engines.postgres import PostgresEngine
-from src.sthali_crud.db_engines.tinydb import TinyDBEngine
+from sthali_crud.db_engines.base import BaseEngine
+from sthali_crud.db_engines.postgres import PostgresEngine
+from sthali_crud.db_engines.tinydb import TinyDBEngine
 
 AVAILABLE_ENGINES = Literal["postgres", "tinydb"]
 

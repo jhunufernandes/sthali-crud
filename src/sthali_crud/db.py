@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from src.sthali_crud.db_engines import AVAILABLE_ENGINES, DBEngine
-from src.sthali_crud.db_engines.base import BaseEngine
+from sthali_crud.db_engines import AVAILABLE_ENGINES, DBEngine
+from sthali_crud.db_engines.base import BaseEngine
 
 
 class DB(DBEngine):

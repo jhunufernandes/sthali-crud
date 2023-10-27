@@ -5,8 +5,8 @@ from fastapi import HTTPException, status
 from pydantic import BaseModel, ValidationError
 from pydantic_core import ErrorDetails
 
-from src.sthali_crud.db import DB
-from src.sthali_crud.models import Models
+from sthali_crud.db import DB
+from sthali_crud.models import Models
 
 
 class CRUDException(HTTPException):

@@ -1,10 +1,10 @@
 from fastapi import APIRouter, FastAPI
 
-from src.sthali_crud.config import config_router
-from src.sthali_crud.crud import CRUD
-from src.sthali_crud.db import DB
-from src.sthali_crud.models import Models
-from src.sthali_crud.types import AppSpecification
+from sthali_crud.config import config_router
+from sthali_crud.crud import CRUD
+from sthali_crud.db import DB
+from sthali_crud.models import Models
+from sthali_crud.types import AppSpecification
 
 
 class SthaliCRUD:

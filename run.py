@@ -1,4 +1,4 @@
-from src.sthali_crud import SthaliCRUD, AppSpecification
+from sthali_crud import SthaliCRUD, AppSpecification
 
 
 spec = {
