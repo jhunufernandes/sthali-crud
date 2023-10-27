@@ -13,7 +13,7 @@ class SthaliCRUD:
     def __init__(self, app_spec: AppSpecification) -> None:
         for resource in app_spec.resources:
             models = Models(resource.name, resource.fields)
-            db = DB(resource.db_engine, resource.name)
+            db = DB(resource.db, resource.name)
             crud = CRUD(db, models)
             router_cfg = config_router(crud, resource.name, models)
             router = APIRouter(prefix=router_cfg.prefix, tags=router_cfg.tags)

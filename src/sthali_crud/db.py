@@ -1,15 +1,12 @@
 from uuid import UUID
 
-from .db_engines import AVAILABLE_ENGINES, DBEngine
-from .db_engines.base import BaseEngine
+from .db_engines import DBEngine
+from .types import DBSpecification
 
 
 class DB(DBEngine):
-    engine: type[BaseEngine]
-    table: str
-
-    def __init__(self, engine: AVAILABLE_ENGINES, table: str) -> None:
-        super().__init__(engine, table)
+    def __init__(self, db_spec: DBSpecification, table: str) -> None:
+        super().__init__(db_spec, table)
 
     async def create(self, resource_id: UUID, resource_obj: dict, *args, **kwargs) -> dict:
         return await self.db_insert_one(resource_id=resource_id, resource_obj=resource_obj)

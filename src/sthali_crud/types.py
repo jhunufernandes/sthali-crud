@@ -2,7 +2,13 @@ from typing import Any, Callable, Literal
 
 from pydantic.dataclasses import dataclass
 
-from .db_engines import AVAILABLE_ENGINES
+
+@dataclass
+class DBSpecification:
+    """DB"""
+
+    engine: Literal["postgres", "tinydb"]
+    path: str
 
 
 @dataclass
@@ -20,7 +26,7 @@ class FieldDefinition:
 class ResourceSpecification:
     """Resource specification"""
 
-    db_engine: Literal[AVAILABLE_ENGINES]
+    db: DBSpecification
     name: str
     fields: list[FieldDefinition]
 

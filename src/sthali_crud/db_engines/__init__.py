@@ -3,8 +3,7 @@ from typing import Any, Literal
 from .base import BaseEngine
 from .postgres import PostgresEngine
 from .tinydb import TinyDBEngine
-
-AVAILABLE_ENGINES = Literal["postgres", "tinydb"]
+from ..types import DBSpecification
 
 
 class Engine:
@@ -15,9 +14,9 @@ class Engine:
 class DBEngine:
     engine: type[BaseEngine]
 
-    def __init__(self, engine: AVAILABLE_ENGINES, table: str) -> None:
-        db_engine = getattr(Engine, engine)
-        self.engine = db_engine(table)
+    def __init__(self, db_spec: DBSpecification, table: str) -> None:
+        db_engine = getattr(Engine, db_spec.engine)
+        self.engine = db_engine(db_spec.path, table)
 
     async def db_insert_one(self, *args, **kwargs) -> Any:
         return await self.engine.db_insert_one(*args, **kwargs)

@@ -3,6 +3,7 @@ from unittest.mock import AsyncMock
 from src.sthali_crud.crud import CRUD
 from src.sthali_crud.models import Models
 from src.sthali_crud.types import (
+    DBSpecification,
     FieldDefinition,
     ResourceSpecification,
     RouteConfiguration,
@@ -10,7 +11,10 @@ from src.sthali_crud.types import (
 )
 
 RESOURCE_SPEC = ResourceSpecification(
-    db_engine="tinydb",
+    db=DBSpecification(
+        engine="tinydb",
+        path="",
+    ),
     name="people",
     fields=[
         FieldDefinition(
