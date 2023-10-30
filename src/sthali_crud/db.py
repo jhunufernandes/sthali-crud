@@ -19,3 +19,6 @@ class DB(DBEngine):
 
     async def delete(self, resource_id: UUID, *args, **kwargs) -> None:
         return await self.db_delete_one(resource_id=resource_id)
+
+    async def read_all(self, *args, **kwargs) -> dict:
+        return await self.db_select_all()

@@ -55,6 +55,12 @@ def config_router(crud: CRUD, name: str, models: Models) -> RouterConfiguration:
                 methods=["DELETE"],
                 status_code=204,
             ),
+            RouteConfiguration(
+                path="/",
+                endpoint=crud.read_all,
+                response_model=list[models.response_model],
+                methods=["GET"],
+            ),
         ],
         tags=[name],
     )

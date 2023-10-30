@@ -53,3 +53,6 @@ class TinyDBEngine(BaseEngine):
         self._get(resource_id)
         self.db.table(self.table).remove(Query().resource_id == str(resource_id))
         return
+
+    async def db_select_all(self, *args, **kwargs) -> list[dict]:
+        return self.db.table(self.table).all()

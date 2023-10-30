@@ -58,7 +58,7 @@ Nothing to see here, plz disperse
 
 <div class="termy">
 
-```terminal
+```console
 uvicorn run:sthalicrud --host 0.0.0.0 --port 9000
 ```
 You could use <code>--reload</code>
