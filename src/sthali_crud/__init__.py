@@ -1,6 +1,6 @@
 from fastapi import APIRouter, FastAPI
 
-from .config import config_router
+from .config import config_router, parse_spec_file
 from .crud import CRUD
 from .db import DB
 from .models import Models
@@ -30,5 +30,6 @@ class SthaliCRUD:
 
 __all__ = [
     "AppSpecification",
+    "parse_spec_file",
     "SthaliCRUD",
 ]

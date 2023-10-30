@@ -58,3 +58,7 @@ def config_router(crud: CRUD, name: str, models: Models) -> RouterConfiguration:
         ],
         tags=[name],
     )
+
+
+def parse_spec_file(str) -> dict:
+    return {}

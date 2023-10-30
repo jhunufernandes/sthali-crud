@@ -1,40 +1,11 @@
-from os import getenv, path
+from os import getenv
 
-from src.sthali_crud import AppSpecification, SthaliCRUD
+from sthali_crud import AppSpecification, parse_spec_file, SthaliCRUD
 
-TINYDB_PATH = path.join(path.dirname(__file__), "tinydb.json")
-SPEC = {
-    "resources": [
-        {
-            "db": {"engine": "tinydb", "path": TINYDB_PATH},
-            "name": "samples",
-            "fields": [
-                {
-                    "name": "str",
-                    "type": str,
-                },
-                {
-                    "name": "str or none",
-                    "type": str,
-                },
-            ],
-        },
-        {
-            "db": {"engine": "tinydb", "path": TINYDB_PATH},
-            "name": "dogs",
-            "fields": [
-                {
-                    "name": "name",
-                    "type": str,
-                },
-                {
-                    "name": "fur",
-                    "type": bool,
-                },
-            ],
-        },
-    ]
-}
+from spec_example import EXAMPLE_SPEC
 
-sthalicrud = SthaliCRUD(AppSpecification(**SPEC))
+
+spec_file_path = getenv('SPEC_FILE_PATH')
+spec_dict = parse_spec_file(spec_file_path) if spec_file_path else EXAMPLE_SPEC
+sthalicrud = SthaliCRUD(AppSpecification(**spec_dict))
 app = sthalicrud.app

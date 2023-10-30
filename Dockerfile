@@ -1,10 +1,13 @@
-FROM python:3.11.12-alpine AS base
+
+FROM python:3.11-alpine AS base
 
 LABEL maintainer="Jhunu Fernandes jhunu.fernandes@gmail.com"
 
-WORKDIR /app
+ENV SRC_PATH=/app
 
-COPY requirements.txt /app/requirements.txt
+COPY requirements.txt ${SRC_PATH}/requirements.txt
+
+WORKDIR ${SRC_PATH}
 
 RUN apk add --no-cache build-base libffi-dev openssl-dev && \
     pip install --no-cache-dir -r requirements.txt uvicorn && \
@@ -12,12 +15,10 @@ RUN apk add --no-cache build-base libffi-dev openssl-dev && \
 
 FROM base AS final
 
-COPY ./src /app/src
+COPY /src ${SRC_PATH}
 
 EXPOSE 80
 
-ENV APP_SPEC_FILE="app_spec.py"
+ENTRYPOINT ["uvicorn"]
 
-ENTRYPOINT ["uvicorn", "app.src.run:app"]
-
-CMD ["--host", "0.0.0.0", "--port", "80"]
+CMD ["run:app", "--host", "0.0.0.0", "--port", "80"]
