@@ -5,7 +5,7 @@ LABEL maintainer="Jhunu Fernandes jhunu.fernandes@gmail.com"
 
 ENV SRC_PATH=/app
 
-COPY requirements.txt ${SRC_PATH}/requirements.txt
+COPY build/requirements.txt ${SRC_PATH}/requirements.txt
 
 WORKDIR ${SRC_PATH}
 
