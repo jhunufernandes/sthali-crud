@@ -1,6 +1,6 @@
 <p align="center">
-    <a href="https://jhunufernandes.github.io/sthali-crud/images/crud.svg">
-        <img src="https://jhunufernandes.github.io/sthali-crud/images/crud.svg" alt="SthaliCRUD" height="35%">
+    <a href="/images/crud.svg">
+        <img src="/images/crud.svg" alt="SthaliCRUD" height="35%">
     </a>
 </p>
 
