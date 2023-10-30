@@ -2,6 +2,9 @@
     <a href="docs/images/crud.svg">
         <img src="docs/images/crud.svg" alt="SthaliCRUD" height=720>
     </a>
+    <em>A FastAPI package for CRUD operations</em>
+</p>
+<p align="center">
     <a href="https://pypi.org/project/sthali-crud" target="_blank">
         <img src="https://img.shields.io/pypi/v/sthali-crud?label=Version&color=%232EBC4F" alt="Package version">
     </a>
@@ -30,14 +33,44 @@
 ---
 
 ## Requirements
-
-Python 3.11+
+Python >= 3.11
 
 * <a href="https://fastapi.tiangolo.com/" class="external-link" target="_blank">FastAPI</a>
 * <a href="https://tinydb.readthedocs.io/" class="external-link" target="_blank">TinyDB</a>
 
-## Installation
+## Test
+You can test this package alone by cloning the repo or pulling our container
 
+```console
+$ git clone https://github.com/jhunufernandes/sthali-crud/
+...
+config your env
+...
+$ export ENV=DOCKER
+$ ./run.sh
+```
+
+```console
+$ docker pull jhunufernandes/sthali-crud
+$ export ENV=DOCKER
+$ ./run.sh
+```
+
+## Automatic API docs
+Now go to <a href="http://127.0.0.1:9000/docs" class="external-link" target="_blank">http://127.0.0.1:9000/docs</a>.
+
+You will see the automatic interactive API documentation (provided by <a href="https://github.com/swagger-api/swagger-ui" class="external-link" target="_blank">Swagger UI</a>):
+
+<!-- ![Swagger UI](https://fastapi.tiangolo.com/img/index/index-01-swagger-ui-simple.png) -->
+
+### Alternative API docs
+And now, go to <a href="http://127.0.0.1:9000/redoc" class="external-link" target="_blank">http://127.0.0.1:9000/redoc</a>.
+
+You will see the alternative automatic documentation (provided by <a href="https://github.com/Rebilly/ReDoc" class="external-link" target="_blank">ReDoc</a>):
+
+<!-- ![ReDoc](https://fastapi.tiangolo.com/img/index/index-02-redoc-simple.png) -->
+
+## Installation
 <div class="termy">
 
 ```console
@@ -45,39 +78,18 @@ $ pip install sthali-crud
 ```
 
 ## Configuration
-
 <div class="termy">
 
 ```Python
-
 Nothing to see here, plz disperse
-
 ```
 
 ## Run
-
 <div class="termy">
 
 ```console
-uvicorn run:sthalicrud --host 0.0.0.0 --port 9000
+Nothing to see here, plz disperse
 ```
-You could use <code>--reload</code>
-
-## Automatic API docs
-
-Now go to <a href="http://127.0.0.1:8000/docs" class="external-link" target="_blank">http://127.0.0.1:8000/docs</a>.
-
-You will see the automatic interactive API documentation (provided by <a href="https://github.com/swagger-api/swagger-ui" class="external-link" target="_blank">Swagger UI</a>):
-
-<!-- ![Swagger UI](https://fastapi.tiangolo.com/img/index/index-01-swagger-ui-simple.png) -->
-
-### Alternative API docs
-
-And now, go to <a href="http://127.0.0.1:8000/redoc" class="external-link" target="_blank">http://127.0.0.1:8000/redoc</a>.
-
-You will see the alternative automatic documentation (provided by <a href="https://github.com/Rebilly/ReDoc" class="external-link" target="_blank">ReDoc</a>):
-
-<!-- ![ReDoc](https://fastapi.tiangolo.com/img/index/index-02-redoc-simple.png) -->
 
 ## License
 
