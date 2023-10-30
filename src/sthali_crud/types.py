@@ -1,4 +1,5 @@
 from typing import Any, Callable, Literal
+from types import UnionType
 
 from pydantic.dataclasses import dataclass
 
@@ -16,10 +17,10 @@ class FieldDefinition:
     """Field definition"""
 
     name: str
-    type: type
+    type: UnionType
+    type: Any
     has_default: bool = False  # needed only if default_value is None
     default_value: Any = None
-    allow_none: bool = False
 
 
 @dataclass

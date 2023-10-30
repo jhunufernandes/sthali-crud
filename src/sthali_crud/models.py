@@ -46,8 +46,9 @@ class Models:
     ) -> type[BaseModel]:
         fields_constructor = {}
         for field in fields:
-            field_default_value = (..., field.default_value)[field.default_value or field.has_default]
-            field_type = (field.type, field.type | None)[field.allow_none]
-            fields_constructor[field.name] = (field_type, field_default_value)
+            field_default_value = (..., field.default_value)[
+                bool(field.default_value or field.has_default)
+            ]
+            fields_constructor[field.name] = (field.type, field_default_value)
 
         return create_model(__model_name=name, __base__=base, **fields_constructor)

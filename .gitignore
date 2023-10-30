@@ -8,3 +8,9 @@ ENV/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 dist/
+
+# Vscode
+.vscode/
+
+# DB volumes
+tinydb.json
