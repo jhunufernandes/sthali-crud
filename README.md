@@ -85,4 +85,4 @@ $ pip install sthali-crud
 
 ## License
 
-This project is licensed under the terms of the [MIT license](docs/LICENSE.md).
+This project is licensed under the terms of the [MIT license](docs/LICENSE).
