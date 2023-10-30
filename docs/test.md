@@ -1,11 +1,3 @@
-<p align="center">
-    <a href="https://jhunufernandes.github.io/sthali-crud/images/crud.svg">
-        <img src="https://jhunufernandes.github.io/sthali-crud/images/crud.svg" alt="SthaliCRUD" height=35%>
-    </a>
-</p>
-
-## Local run
-
 You can test this package alone by cloning the repo
 
 ```console

@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://jhunufernandes.github.io/sthali-crud/images/crud.svg">
-        <img src="https://jhunufernandes.github.io/sthali-crud/images/crud.svg" alt="SthaliCRUD" height=25%>
+        <img src="https://jhunufernandes.github.io/sthali-crud/images/crud.svg" alt="SthaliCRUD" height=35%>
     </a>
     <em>A FastAPI package for CRUD operations</em>
 </p>
@@ -57,7 +57,7 @@ config your env
 (.venv)$ ./run.sh
 ```
 
-or pulling our container
+or pulling the container.
 
 ```console
 $ docker pull jhunufernandes/sthali-crud
@@ -67,11 +67,11 @@ $ ./run.sh
 
 #### Automatic API docs
 
-Now go to [http://127.0.0.1:9000/docs](http://127.0.0.1:9000/docs). You will see the automatic interactive API documentation (provided by [Swagger UI](https://github.com/swagger-api/swagger-ui)):
+Now go to [http://127.0.0.1:9000/docs](http://127.0.0.1:9000/docs). You will see the automatic interactive API documentation (provided by [Swagger UI](https://github.com/swagger-api/swagger-ui)).
 
 #### Alternative API docs
 
-And now, go to [http://127.0.0.1:9000/redoc](http://127.0.0.1:9000/redoc). You will see the alternative automatic documentation (provided by <a href="https://github.com/Rebilly/ReDoc" class="external-link" target="_blank">ReDoc</a>):
+And now, go to [http://127.0.0.1:9000/redoc](http://127.0.0.1:9000/redoc). You will see the alternative automatic documentation (provided by <a href="https://github.com/Rebilly/ReDoc" class="external-link" target="_blank">ReDoc</a>).
 
 
 
@@ -85,4 +85,4 @@ $ pip install sthali-crud
 
 ## License
 
-This project is licensed under the terms of the MIT license.
+This project is licensed under the terms of the [MIT license](docs/LICENSE.md).
