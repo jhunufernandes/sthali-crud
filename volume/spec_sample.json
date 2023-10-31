@@ -1,0 +1,54 @@
+{
+    "resources": [
+        {
+            "db": {"engine": "tinydb", "path": "./tinydb.json"},
+            "name": "samples",
+            "fields": [
+                {
+                    "name": "str",
+                    "type": ["str"]
+                },
+                {
+                    "name": "str or none",
+                    "type": ["str", "none"]
+                },
+                {
+                    "name": "str default 'str'",
+                    "type": ["str"],
+                    "default_value": "str"
+                },
+                {
+                    "name": "str or none default 'str'",
+                    "type": ["str", "none"],
+                    "default_value": "str"
+                },
+                {
+                    "name": "str or none default 'none'",
+                    "type": ["str", "none"],
+                    "default_value": "none",
+                    "has_default": "True"
+                },
+                {
+                    "name": "int",
+                    "type": ["int"]
+                },
+                {
+                    "name": "float",
+                    "type": ["float"]
+                },
+                {
+                    "name": "bool",
+                    "type": ["bool"]
+                },
+                {
+                    "name": "list",
+                    "type": ["list"]
+                },
+                {
+                    "name": "dict",
+                    "type": ["dict"]
+                }
+            ]
+        }
+    ]
+}

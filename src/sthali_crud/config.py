@@ -1,8 +1,28 @@
-from typing import Callable
+import json
+from yaml import safe_load
+from typing import Any, Callable, Union
 
 from .crud import CRUD
 from .models import Models
 from .types import RouteConfiguration, RouterConfiguration
+
+
+class Types:
+    any = Any
+    none = None
+    bool = bool
+    true = True
+    false = False
+    str = str
+    int = int
+    float = float
+    list = list
+    dict = dict
+
+
+class ConfigException(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
 
 
 def replace_type_hint(
@@ -66,5 +86,34 @@ def config_router(crud: CRUD, name: str, models: Models) -> RouterConfiguration:
     )
 
 
-def parse_spec_file(str) -> dict:
-    return {}
+def parse_spec_file(spec_file_path: str) -> dict:
+    def get_type(type_str: str) -> Any:
+        type_str = type_str.strip().lower()
+        try:
+            return getattr(Types, type_str)
+        except AttributeError as exception:
+            raise ConfigException("Invalid type") from exception
+
+    spec_file_extension = spec_file_path.split(".")[-1]
+    if spec_file_extension not in ("yaml", "yml", "json"):
+        raise ConfigException("Invalid file extension")
+
+    with open(spec_file_path, "r", encoding="utf-8") as spec_file:
+        spec_dict = (
+            json.load(spec_file)
+            if spec_file_extension == "json"
+            else safe_load(spec_file)
+        )
+
+    for resource in spec_dict["resources"]:
+        for field in resource["fields"]:
+            if isinstance(field["type"], str):
+                field["type"] = get_type(field["type"])
+            elif isinstance(field["type"], list):
+                types_list = [get_type(type) for type in field["type"]]
+                field["type"] = Union[*types_list]
+            else:
+                raise ConfigException("Invalid field type")
+            if "has_default" in field:
+                field["has_default"] = get_type(field["has_default"])
+    return spec_dict
