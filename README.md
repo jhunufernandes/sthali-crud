@@ -1,24 +1,29 @@
 <p align="center">
     <a href="https://jhunufernandes.github.io/sthali-crud/images/crud.svg">
-        <img src="https://jhunufernandes.github.io/sthali-crud/images/crud.svg" alt="SthaliCRUD" height=35%>
+        <img src="https://jhunufernandes.github.io/sthali-crud/images/crud.svg" alt="SthaliCRUD" height="35%">
     </a>
     <em>A FastAPI package for CRUD operations</em>
 </p>
 <p align="center">
-    <a href="https://pypi.org/project/sthali-crud" target="_blank">
-        <img src="https://img.shields.io/pypi/v/sthali-crud?label=Version&color=%232EBC4F" alt="">
+    <a href="https://pypi.org/project/sthali-crud/" target="_blank">
+        <img src="https://img.shields.io/pypi/v/sthali-crud?label=Python%20Version&logo=python&color=%23ca5b32&logoColor=white" alt="">
     </a>
-    <a href="https://pypi.org/project/sthali-crud" target="_blank">
-        <img src="https://img.shields.io/pypi/pyversions/sthali-crud.svg?label=Python&color=%232EBC4F" alt="">
+    <a href="https://github.com/jhunufernandes/sthali-crud/blob/main/docs/LICENSE" target="_blank">
+        <img src="https://img.shields.io/github/license/jhunufernandes/sthali-crud?label=License&logo=opensourceinitiative&color=%23ca5b32&logoColor=white" alt="">
     </a>
-    <a href="https://pypi.org/project/sthali-crud" target="_blank">
-        <img src="https://img.shields.io/github/license/jhunufernandes/sthali-crud?label=License&color=%232EBC4F" alt="">
-    </a>
+</p>
+<p align="center">
     <a href="https://github.com/jhunufernandes/sthali-crud/actions/workflows/test-package.yml" target="_blank">
         <img src="https://github.com/jhunufernandes/sthali-crud/actions/workflows/test-package.yml/badge.svg" alt="">
     </a>
-    <a href="https://github.com/jhunufernandes/sthali-crud/actions/workflows/upload-package.yml" target="_blank">
-        <img src="https://github.com/jhunufernandes/sthali-crud/actions/workflows/upload-package.yml/badge.svg" alt="">
+    <a href="https://github.com/jhunufernandes/sthali-crud/actions/workflows/build-upload-pypi.yml" target="_blank">
+        <img src="https://github.com/jhunufernandes/sthali-crud/actions/workflows/build-upload-pypi.yml/badge.svg" alt="">
+    </a>
+    <a href="https://github.com/jhunufernandes/sthali-crud/actions/workflows/build-upload-dockerhub.yml" target="_blank">
+        <img src="https://github.com/jhunufernandes/sthali-crud/actions/workflows/build-upload-dockerhub.yml/badge.svg" alt="">
+    </a>
+    <a href="https://github.com/jhunufernandes/sthali-crud/actions/workflows/build-upload-ghcr.yml" target="_blank">
+        <img src="https://github.com/jhunufernandes/sthali-crud/actions/workflows/build-upload-ghcr.yml/badge.svg" alt="">
     </a>
 </p>
 
