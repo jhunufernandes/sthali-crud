@@ -7,6 +7,10 @@ ENV SRC_PATH=/app
 
 COPY build/requirements.txt ${SRC_PATH}/requirements.txt
 
+RUN mkdir -p ${SRC_PATH}/volume
+
+VOLUME ${SRC_PATH}/volume
+
 WORKDIR ${SRC_PATH}
 
 RUN apk add --no-cache build-base libffi-dev openssl-dev && \

@@ -1,6 +1,6 @@
 from os import path
 
-TINYDB_PATH = path.join(path.dirname(__file__), "tinydb.json")
+TINYDB_PATH = path.join(path.dirname(__file__), "../volume/tinydb.json")
 EXAMPLE_SPEC = {
     "resources": [
         {

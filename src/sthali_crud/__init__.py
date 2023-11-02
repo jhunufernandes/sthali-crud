@@ -1,28 +1,22 @@
-from contextlib import asynccontextmanager
-
 from fastapi import APIRouter, FastAPI
 
-from .config import config_router, parse_spec_file
+from .config import config_router, lifespan, parse_spec_file
 from .crud import CRUD
 from .db import DB
 from .models import Models
 from .types import AppSpecification
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    print('startup event')
-    yield
-    print('shutdown event')
-
-
 class SthaliCRUD:
     app: FastAPI
 
-    def __init__(self, app_spec: AppSpecification, lifespan: callable = lifespan) -> None:
+    def __init__(
+        self, app_spec: AppSpecification, lifespan: callable = lifespan
+    ) -> None:
         app = FastAPI(lifespan=lifespan)
         self.app = app
 
+        _db: dict[str, DB] = {}
         for resource in app_spec.resources:
             models = Models(resource.name, resource.fields)
             db = DB(resource.db, resource.name)
@@ -39,6 +33,8 @@ class SthaliCRUD:
                 )
 
             self.app.include_router(router)
+            _db[resource.name] = db
+        self.app.extra['db'] = _db
 
 
 __all__ = [

@@ -3,3 +3,4 @@ httpx
 mkdocs
 pytest
 uvicorn
+ruff

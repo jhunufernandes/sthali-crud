@@ -1,6 +1,9 @@
 import json
+from contextlib import asynccontextmanager
 from yaml import safe_load
 from typing import Any, Callable, Union
+
+from fastapi import FastAPI
 
 from .crud import CRUD
 from .models import Models
@@ -84,6 +87,13 @@ def config_router(crud: CRUD, name: str, models: Models) -> RouterConfiguration:
         ],
         tags=[name],
     )
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Startup SthaliCRUD")
+    yield
+    print("Shutdown SthaliCRUD")
 
 
 def parse_spec_file(spec_file_path: str) -> dict:

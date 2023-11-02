@@ -55,4 +55,7 @@ class TinyDBEngine(BaseEngine):
         return
 
     async def db_select_all(self, *args, **kwargs) -> list[dict]:
-        return self.db.table(self.table).all()
+        return [
+            {"id": result["resource_id"], **result["resource_obj"]}
+            for result in self.db.table(self.table).all()
+        ]
