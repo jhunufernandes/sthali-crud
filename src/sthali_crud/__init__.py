@@ -34,7 +34,7 @@ class SthaliCRUD:
 
             self.app.include_router(router)
             _db[resource.name] = db
-        self.app.extra['db'] = _db
+        self.app.extra["db"] = _db
 
 
 __all__ = [
