@@ -9,5 +9,11 @@ ENV/
 __pycache__/
 dist/
 
+# Cache directories
+*_cache
+
 # DB volumes
 tinydb.json
+
+
+# Editor files

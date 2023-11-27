@@ -1,9 +1,9 @@
 from typing import Any
 
 from ..types import DBSpecification
-from .base import BaseEngine
-from .postgres import PostgresEngine
-from .tinydb import TinyDBEngine
+from ..db_engines.base import BaseEngine
+from ..db_engines.postgres import PostgresEngine
+from ..db_engines.tinydb import TinyDBEngine
 
 
 class Engine:

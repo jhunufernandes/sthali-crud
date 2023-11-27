@@ -28,6 +28,13 @@ class ConfigException(Exception):
         super().__init__(*args)
 
 
+@asynccontextmanager
+async def default_lifespan(app: FastAPI):
+    print("Startup SthaliCRUD")
+    yield
+    print("Shutdown SthaliCRUD")
+
+
 def replace_type_hint(
     original_func: Callable, type_name: str, new_type: type
 ) -> Callable:
@@ -89,14 +96,7 @@ def config_router(crud: CRUD, name: str, models: Models) -> RouterConfiguration:
     )
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    print("Startup SthaliCRUD")
-    yield
-    print("Shutdown SthaliCRUD")
-
-
-def parse_spec_file(spec_file_path: str) -> dict:
+def load_and_parse_spec_file(spec_file_path: str) -> dict:
     def get_type(type_str: str) -> Any:
         type_str = type_str.strip().lower()
         try:
@@ -104,16 +104,19 @@ def parse_spec_file(spec_file_path: str) -> dict:
         except AttributeError as exception:
             raise ConfigException("Invalid type") from exception
 
-    spec_file_extension = spec_file_path.split(".")[-1]
-    if spec_file_extension not in ("yaml", "yml", "json"):
-        raise ConfigException("Invalid file extension")
+    def load_spec_file(spec_file_path: str) -> dict:
+        spec_file_extension = spec_file_path.split(".")[-1]
+        if spec_file_extension not in ("yaml", "yml", "json"):
+            raise ConfigException("Invalid file extension")
 
-    with open(spec_file_path, "r", encoding="utf-8") as spec_file:
-        spec_dict = (
-            json.load(spec_file)
-            if spec_file_extension == "json"
-            else safe_load(spec_file)
-        )
+        with open(spec_file_path, "r", encoding="utf-8") as spec_file:
+            return (
+                json.load(spec_file)
+                if spec_file_extension == "json"
+                else safe_load(spec_file)
+            )
+
+    spec_dict = load_spec_file(spec_file_path)
 
     for resource in spec_dict["resources"]:
         for field in resource["fields"]:

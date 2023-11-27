@@ -82,13 +82,11 @@ class CRUD:
     async def create(self, resource: BaseModel):
         resource_id = uuid4()
         resource_obj = resource.model_dump()
-        result = await self._perform_crud(
-            self.db.create, resource_id=resource_id, resource_obj=resource_obj
-        )
+        result = await self._perform_crud(self.db.create, resource_id, resource_obj)
         return self._handle_result(result)
 
     async def read(self, resource_id: UUID):
-        result = await self._perform_crud(self.db.read, resource_id=resource_id)
+        result = await self._perform_crud(self.db.read, resource_id)
         return self._handle_result(result)
 
     async def update(self, resource: BaseModel, resource_id: UUID | None = None):
@@ -106,13 +104,11 @@ class CRUD:
             raise CRUDException(repr(_exception), 404) from _exception
 
         resource_id = _resource_id or resource_id
-        result = await self._perform_crud(
-            self.db.update, resource_id=resource_id, resource_obj=resource_obj
-        )
+        result = await self._perform_crud(self.db.update, resource_id, resource_obj)
         return self._handle_result(result)
 
     async def delete(self, resource_id: UUID) -> None:
-        result = await self._perform_crud(self.db.delete, resource_id=resource_id)
+        result = await self._perform_crud(self.db.delete, resource_id)
         try:
             assert result is None, "result is not none"
         except AssertionError as _exception:

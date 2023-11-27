@@ -26,6 +26,7 @@ class Models:
     create_model: type[BaseModel]
     response_model: type[BaseModel]
     update_model: type[BaseModel]
+    upsert_model: type[BaseModel]
 
     def __init__(self, name: str, fields: list[FieldDefinition]) -> None:
         self.name = name

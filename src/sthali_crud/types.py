@@ -5,7 +5,7 @@ from pydantic.dataclasses import dataclass
 
 @dataclass
 class DBSpecification:
-    """DB"""
+    """DB specification"""
 
     engine: Literal["postgres", "tinydb"]
     path: str
