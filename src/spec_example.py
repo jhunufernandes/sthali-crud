@@ -4,7 +4,7 @@ TINYDB_PATH = path.join(path.dirname(__file__), "../volume/tinydb.json")
 EXAMPLE_SPEC = {
     "resources": [
         {
-            "db": {"engine": "tinydb", "path": TINYDB_PATH},
+            "db": {"engine": "virtual", "path": TINYDB_PATH},
             "name": "samples",
             "fields": [
                 {

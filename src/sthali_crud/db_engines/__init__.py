@@ -1,18 +1,17 @@
 from typing import Any
 
 from ..types import DBSpecification
-from ..db_engines.base import BaseEngine
-from ..db_engines.postgres import PostgresEngine
-from ..db_engines.tinydb import TinyDBEngine
+from . import postgres, tinydb, virtual, base
 
 
 class Engine:
-    postgres = PostgresEngine
-    tinydb = TinyDBEngine
+    postgres = postgres.PostgresEngine
+    tinydb = tinydb.TinyDBEngine
+    virtual = virtual.VirtualEngine
 
 
 class DBEngine:
-    engine: type[BaseEngine]
+    engine: type[base.BaseEngine]
 
     def __init__(self, db_spec: DBSpecification, table: str) -> None:
         db_engine = getattr(Engine, db_spec.engine)

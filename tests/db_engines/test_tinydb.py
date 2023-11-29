@@ -1,106 +1,94 @@
 from unittest import IsolatedAsyncioTestCase, mock
-from uuid import uuid4
 
-from src.sthali_crud.db_engines.tinydb import (
-    HTTPException,
-    TinyDB,
-    TinyDBEngine,
-    status,
-)
-
-
-class MockTinyDB(TinyDB):
-    table = mock.MagicMock()
+from src.sthali_crud.db_engines.tinydb import TinyDBEngine, HTTPException, status
+from tests import ID, PAYLOAD_WITH_ID, PAYLOAD_WITHOUT_ID, db_engines
 
 
 class TestTinyDBEngine(IsolatedAsyncioTestCase):
     def setUp(self):
-        self.db_path = "test_db.json"
-        self.db_table = "test_table"
+        db_path = "test_db.json"
+        db_table = "test_table"
 
         with mock.patch("src.sthali_crud.db_engines.tinydb.TinyDB") as mock_tiny_db:
-            mock_tiny_db.return_value = MockTinyDB
-            tiny_db_engine = TinyDBEngine(self.db_path, self.db_table)
+            mock_tiny_db.return_value = db_engines.MockTinyDB
+            tiny_db_engine = TinyDBEngine(db_path, db_table)
+            tiny_db_engine.db.table = mock.Mock()
             self.tiny_db_engine = tiny_db_engine
 
-    async def test_db_insert_one(self):
-        resource_id = uuid4()
-        resource_obj = {"key": "value"}
+    def test_get(self):
+        self.tiny_db_engine.db.table.return_value.search.return_value = [
+            PAYLOAD_WITHOUT_ID
+        ]
 
-        result = await self.tiny_db_engine.db_insert_one(resource_id, resource_obj)
-        self.assertEqual(result, {"id": str(resource_id), **resource_obj})
+        result = self.tiny_db_engine._get(ID)
+        self.assertEqual(result, PAYLOAD_WITHOUT_ID)
+
+    def test_get_not_found(self):
+        self.tiny_db_engine.db.table.return_value.search.return_value = []
+
+        with self.assertRaises(HTTPException) as context:
+            self.tiny_db_engine._get(ID)
+
+        self.assertEqual(context.exception.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_not_found_without_raise(self):
+        self.tiny_db_engine.db.table.return_value.search.return_value = [{}]
+
+        result = self.tiny_db_engine._get(ID, False)
+        self.assertEqual(result, {})
+
+    async def test_db_insert_one(self):
+        result = await self.tiny_db_engine.db_insert_one(ID, PAYLOAD_WITHOUT_ID)
+        self.assertEqual(result, PAYLOAD_WITH_ID)
 
     @mock.patch("src.sthali_crud.db_engines.tinydb.TinyDBEngine._get")
     async def test_db_select_one(self, mock_get):
-        resource_id = uuid4()
-        resource_obj = {"key": "value"}
+        mock_get.return_value = {"resource_obj": PAYLOAD_WITHOUT_ID}
 
-        mock_get.return_value = {"id": resource_id, "resource_obj": resource_obj}
-
-        result = await self.tiny_db_engine.db_select_one(resource_id)
-        self.assertEqual(result, {"id": str(resource_id), **resource_obj})
+        result = await self.tiny_db_engine.db_select_one(ID)
+        self.assertEqual(result, PAYLOAD_WITH_ID)
 
     async def test_db_select_one_not_found(self):
-        resource_id = uuid4()
-
-        self.tiny_db_engine.db.table.return_value.search.return_value = None
+        self.tiny_db_engine.db.table.return_value.search.return_value = []
 
         with self.assertRaises(HTTPException) as context:
-            await self.tiny_db_engine.db_select_one(resource_id)
+            await self.tiny_db_engine.db_select_one(ID)
 
         self.assertEqual(context.exception.status_code, status.HTTP_404_NOT_FOUND)
 
     @mock.patch("src.sthali_crud.db_engines.tinydb.TinyDBEngine._get")
     async def test_db_update_one(self, mock_get):
-        resource_id = uuid4()
-        updated_obj = {"new_key": "new_value"}
+        mock_get.return_value = {"resource_obj": PAYLOAD_WITHOUT_ID}
 
-        mock_get.return_value = {}
-
-        result = await self.tiny_db_engine.db_update_one(resource_id, updated_obj)
-        self.assertEqual(result, {"id": str(resource_id), **updated_obj})
+        result = await self.tiny_db_engine.db_update_one(ID, PAYLOAD_WITHOUT_ID)
+        self.assertEqual(result, PAYLOAD_WITH_ID)
 
     async def test_db_update_one_not_found(self):
-        resource_id = uuid4()
-        resource_obj = {"new_key": "new_value"}
-
-        self.tiny_db_engine.db.table.return_value.search.return_value = None
+        self.tiny_db_engine.db.table.return_value.search.return_value = []
 
         with self.assertRaises(HTTPException) as context:
-            await self.tiny_db_engine.db_update_one(resource_id, resource_obj)
+            await self.tiny_db_engine.db_update_one(ID, PAYLOAD_WITHOUT_ID)
 
         self.assertEqual(context.exception.status_code, status.HTTP_404_NOT_FOUND)
 
     @mock.patch("src.sthali_crud.db_engines.tinydb.TinyDBEngine._get")
     async def test_db_delete_one(self, mock_get):
-        resource_id = uuid4()
+        mock_get.return_value = {"resource_obj": PAYLOAD_WITHOUT_ID}
 
-        mock_get.return_value = {}
-
-        result = await self.tiny_db_engine.db_delete_one(resource_id)
+        result = await self.tiny_db_engine.db_delete_one(ID)
         self.assertIsNone(result)
 
     async def test_db_delete_one_not_found(self):
-        resource_id = uuid4()
-
         self.tiny_db_engine.db.table.return_value.search.return_value = None
 
         with self.assertRaises(HTTPException) as context:
-            await self.tiny_db_engine.db_delete_one(resource_id)
+            await self.tiny_db_engine.db_delete_one(ID)
 
         self.assertEqual(context.exception.status_code, status.HTTP_404_NOT_FOUND)
 
     async def test_db_select_all(self):
-        records = [
-            {"resource_id": str(uuid4()), "resource_obj": {"key": "value1"}},
-            {"resource_id": str(uuid4()), "resource_obj": {"key": "value2"}},
-        ]
-
+        records = [{"resource_id": ID, "resource_obj": PAYLOAD_WITHOUT_ID}]
         self.tiny_db_engine.db.table.return_value.all.return_value = records
-        expected_result = [
-            {"id": record["resource_id"], **record["resource_obj"]}
-            for record in records
-        ]
 
         result = await self.tiny_db_engine.db_select_all()
-        self.assertEqual(result, expected_result)
+        self.assertEqual(result, [PAYLOAD_WITH_ID])

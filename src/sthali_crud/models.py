@@ -17,10 +17,6 @@ class BaseWithIdOptional(Base):
     id: UUID | None = None
 
 
-class BaseWithStrId(Base):
-    id: str
-
-
 class Models:
     name: str
     create_model: type[BaseModel]
@@ -32,7 +28,7 @@ class Models:
         self.name = name
         self.create_model = self.define_model(Base, f"Create{name.title()}", fields)
         self.response_model = self.define_model(
-            BaseWithStrId, f"Response{name.title()}", fields
+            BaseWithId, f"Response{name.title()}", fields
         )
         self.update_model = self.define_model(
             BaseWithId, f"Update{name.title()}", fields
