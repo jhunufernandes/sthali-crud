@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sthali-crud"
-version = "0.0.3.4"
+version = "0.0.3.5"
 authors = [
   { name="Jhunu Fernandes", email="jhunu.fernandes@gmail.com" },
 ]

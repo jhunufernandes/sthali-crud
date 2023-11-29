@@ -1,4 +1,3 @@
-from typing import Callable
 from uuid import UUID, uuid4
 
 from fastapi import HTTPException, status
@@ -30,21 +29,18 @@ class CRUD:
     def response_model(self):
         return self.models.response_model
 
-    def _handle_list(self, result: list):
+    def _handle_list(self, result: list[dict]) -> list[BaseModel]:
         errors = []
         response_result = []
 
         for r in result:
             try:
-                assert r, "not found"
+                assert r, "Not found"
                 response_result.append(self.response_model(**r))
             except AssertionError as exception:
                 errors.append(exception.args[0])
             except ValidationError as exception:
                 errors.append(exception.errors())
-            except Exception as exception:
-                breakpoint()
-                errors.append(repr(exception))
 
         try:
             assert not errors
@@ -53,42 +49,27 @@ class CRUD:
 
         return response_result
 
-    def _handle_result(self, result: dict | list | None):
-        if isinstance(result, list):
-            return self._handle_list(result)
-
+    def _handle_result(self, result: dict | None) -> BaseModel:
         try:
-            assert result, "not found"
+            assert result, "Not found"
             response_result = self.response_model(**result)
         except AssertionError as exception:
-            raise HTTPException(
-                status.HTTP_404_NOT_FOUND, exception.args[0]
+            raise CRUDException(
+                exception.args[0], status.HTTP_404_NOT_FOUND
             ) from exception
         except ValidationError as exception:
             raise CRUDException(exception.errors()) from exception
-        except Exception as exception:
-            raise CRUDException(repr(exception)) from exception
 
         return response_result
-
-    async def _perform_crud(
-        self,
-        operation: Callable,
-        resource_id: UUID | None = None,
-        resource_obj: dict | None = None,
-    ) -> dict | None:
-        return await operation(resource_id=resource_id, resource_obj=resource_obj)
 
     async def create(self, resource: BaseModel):
         resource_id = uuid4()
         resource_obj = resource.model_dump()
-        result = await self._perform_crud(
-            self.db.create, resource_id=resource_id, resource_obj=resource_obj
-        )
+        result = await self.db.create(resource_id, resource_obj)
         return self._handle_result(result)
 
     async def read(self, resource_id: UUID):
-        result = await self._perform_crud(self.db.read, resource_id=resource_id)
+        result = await self.db.read(resource_id)
         return self._handle_result(result)
 
     async def update(self, resource: BaseModel, resource_id: UUID | None = None):
@@ -97,29 +78,23 @@ class CRUD:
         )
         try:
             assert any([_resource_id, resource_id]), "None id is defined"
-            assert (
-                _resource_id == resource_id
-                if all([_resource_id, resource_id])
-                else _resource_id or resource_id
-            ), "Ids cant match"
+            if all([_resource_id, resource_id]):
+                assert _resource_id == resource_id, "Ids cant match"
         except AssertionError as _exception:
             raise CRUDException(repr(_exception), 404) from _exception
 
-        resource_id = _resource_id or resource_id
-        result = await self._perform_crud(
-            self.db.update, resource_id=resource_id, resource_obj=resource_obj
-        )
+        result = await self.db.update(_resource_id or resource_id, resource_obj)
         return self._handle_result(result)
 
     async def delete(self, resource_id: UUID) -> None:
-        result = await self._perform_crud(self.db.delete, resource_id=resource_id)
+        result = await self.db.delete(resource_id)
         try:
-            assert result is None, "result is not none"
+            assert result is None, "Result is not none"
         except AssertionError as _exception:
-            raise CRUDException(repr(_exception)) from _exception
+            raise CRUDException(repr(_exception), status.HTTP_500_INTERNAL_SERVER_ERROR) from _exception
 
         return result
 
-    async def read_all(self):
-        result = await self._perform_crud(self.db.read_all)
-        return self._handle_result(result)
+    async def read_all(self) -> list[BaseModel]:
+        result = await self.db.read_all()
+        return self._handle_list(result)

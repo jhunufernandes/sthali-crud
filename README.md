@@ -46,6 +46,8 @@
 Python >= 3.11
 * [FastAPI](https://fastapi.tiangolo.com/)
 * [TinyDB](https://tinydb.readthedocs.io/)
+* [Pydantic](https://docs.pydantic.dev/latest/)
+* [PyYAML](https://pypi.org/project/PyYAML/)
 
 
 
