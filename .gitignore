@@ -8,6 +8,7 @@ ENV/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 dist/
+.coverage
 
 # Cache directories
 *_cache
@@ -15,5 +16,5 @@ dist/
 # DB volumes
 tinydb.json
 
-
 # Editor files
+.vscode
