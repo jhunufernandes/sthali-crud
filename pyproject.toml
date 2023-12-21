@@ -1,0 +1,36 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=61.0"]
+
+[project]
+name = "sthali-crud"
+version = "0.0.3.6"
+authors = [{ name = "Jhunu Fernandes", email = "jhunu.fernandes@gmail.com" }]
+description = "A FastAPI package for CRUD operations"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+  "Programming Language :: Python :: 3.10",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+dependencies = ["fastapi", "tinydb", "pydantic", "pyyaml"]
+
+[project.optional-dependencies]
+dev = ["coverage", "mkdocs", "pytest", "ruff", { path = "../sthali-db" }]
+tests = ["coverage", "pytest"]
+stage = ["build", "coverage", "pytest", "sthali-db"]
+
+[project.urls]
+"Homepage" = "https://github.com/jhunufernandes/sthali-crud"
+"Bug Tracker" = "https://github.com/jhunufernandes/sthali-crud/issues"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.report]
+omit = ["tests/*"]
+
+[tool.coverage.run]
+branch = true
+command_line = "-m pytest"

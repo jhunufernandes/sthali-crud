@@ -19,10 +19,10 @@ class BaseWithIdOptional(Base):
 
 class Models:
     name: str
-    create_model: type[BaseModel]
-    response_model: type[BaseModel]
-    update_model: type[BaseModel]
-    upsert_model: type[BaseModel]
+    create_model: type[Base]
+    response_model: type[Base]
+    update_model: type[Base]
+    upsert_model: type[Base]
 
     def __init__(self, name: str, fields: list[FieldDefinition]) -> None:
         self.name = name
@@ -39,8 +39,8 @@ class Models:
 
     @staticmethod
     def define_model(
-        base: type[BaseModel], name: str, fields: list[FieldDefinition]
-    ) -> type[BaseModel]:
+        base: type[Base], name: str, fields: list[FieldDefinition]
+    ) -> type[Base]:
         fields_constructor = {}
         for field in fields:
             field_default_value = (..., field.default_value)[
@@ -48,4 +48,4 @@ class Models:
             ]
             fields_constructor[field.name] = (field.type, field_default_value)
 
-        return create_model(__model_name=name, __base__=base, **fields_constructor)
+        return create_model(__model_name=name, __base__=base, **fields_constructor)  # type: ignore

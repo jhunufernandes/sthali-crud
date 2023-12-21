@@ -1,7 +1,6 @@
 from uuid import UUID
 
-from .db_engines import DBEngine
-from .types import DBSpecification
+from sthali_db import DBEngine, DBSpecification
 
 
 class DB(DBEngine):

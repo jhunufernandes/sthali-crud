@@ -30,13 +30,13 @@ class SthaliCRUD:
             db = DB(resource.db, resource.name)
             crud = CRUD(db, models)
             router_cfg = config_router(crud, resource.name, models)
-            router = APIRouter(prefix=router_cfg.prefix, tags=router_cfg.tags)
+            router = APIRouter(prefix=router_cfg.prefix, tags=router_cfg.tags)  # type: ignore
             for route in router_cfg.routes:
                 router.add_api_route(
                     path=route.path,
                     endpoint=route.endpoint,
                     response_model=route.response_model,
-                    methods=route.methods,
+                    methods=route.methods,  # type: ignore
                     status_code=route.status_code,
                 )
 

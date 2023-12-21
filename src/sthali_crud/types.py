@@ -1,14 +1,7 @@
 from typing import Any, Callable, Literal
 
 from pydantic.dataclasses import dataclass
-
-
-@dataclass
-class DBSpecification:
-    """DB specification"""
-
-    engine: Literal["postgres", "tinydb", "virtual"]
-    path: str
+from sthali_db import DBSpecification
 
 
 @dataclass
