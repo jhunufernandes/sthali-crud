@@ -9,6 +9,7 @@ ENV/
 __pycache__/
 dist/
 .coverage
+*.egg-info/
 
 # Cache directories
 *_cache

@@ -17,9 +17,16 @@ classifiers = [
 dependencies = ["fastapi", "tinydb", "pydantic", "pyyaml"]
 
 [project.optional-dependencies]
-dev = ["coverage", "mkdocs", "pytest", "ruff", { path = "../sthali-db" }]
+dev = [
+  "coverage",
+  "mkdocs",
+  "pytest",
+  "ruff",
+  "sthali-db @ file:///home/jhunu/Documents/sthali-db/",
+  "uvicorn",
+]
 tests = ["coverage", "pytest"]
-stage = ["build", "coverage", "pytest", "sthali-db"]
+stage = ["build", "coverage", "pytest", "sthali-db", "uvicorn"]
 
 [project.urls]
 "Homepage" = "https://github.com/jhunufernandes/sthali-crud"
