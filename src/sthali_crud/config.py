@@ -114,10 +114,8 @@ def load_and_parse_spec_file(spec_file_path: str) -> dict:
             if isinstance(field["type"], str):
                 field["type"] = get_type(field["type"])
             elif isinstance(field["type"], list):
-                types_list = [get_type(type) for type in field["type"]]
-                breakpoint()
-                x = 1
-                # field["type"] = Union[*types_list]
+                types_list = tuple(get_type(type) for type in field["type"])
+                field["type"] = Union[types_list]  # type: ignore
             else:
                 raise ConfigException("Invalid field type")
             if "has_default" in field:
