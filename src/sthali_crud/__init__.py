@@ -2,13 +2,7 @@ from typing import Callable
 
 from fastapi import APIRouter, FastAPI
 
-from .config import (
-    config_router,
-    default_lifespan,
-)
-from .config import (
-    load_and_parse_spec_file as parse_spec_file,
-)
+from .config import config_router, default_lifespan, load_and_parse_spec_file
 from .crud import CRUD
 from .db import DB
 from .models import Models
@@ -45,6 +39,6 @@ class SthaliCRUD:
 
 __all__ = [
     "AppSpecification",
-    "parse_spec_file",
+    "load_and_parse_spec_file",
     "SthaliCRUD",
 ]
