@@ -1,7 +1,7 @@
 EXAMPLE_SPEC = {
     "resources": [
         {
-            "db": {"engine": "Default", "path": ''},
+            "db": {"engine": "Default", "path": ""},
             "name": "samples",
             "fields": [
                 {

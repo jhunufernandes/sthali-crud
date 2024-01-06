@@ -1,10 +1,10 @@
-import logging
 import json
+import logging
 from contextlib import asynccontextmanager
-from yaml import safe_load
 from typing import Any, Callable, Union
 
 from fastapi import FastAPI
+from yaml import safe_load
 
 from .crud import CRUD
 from .models import Models
@@ -80,7 +80,7 @@ def config_router(crud: CRUD, name: str, models: Models) -> RouterConfiguration:
             ),
             RouteConfiguration(
                 path="/",
-                endpoint=crud.read_all,
+                endpoint=crud.read_many,
                 response_model=list[models.response_model],
                 methods=["GET"],
             ),

@@ -1,10 +1,11 @@
 from uuid import UUID, uuid4
 
-from fastapi import HTTPException, status
+from fastapi import Depends, HTTPException, status
 from pydantic import ValidationError
 from pydantic_core import ErrorDetails
 
-from .db import DB
+from sthali_db import DBEngine, filter_parameters
+
 from .models import Base, Models
 
 ResponseModel = Base
@@ -20,10 +21,10 @@ class CRUDException(HTTPException):
 
 
 class CRUD:
-    db: DB
+    db: DBEngine
     models: Models
 
-    def __init__(self, db: DB, models: Models) -> None:
+    def __init__(self, db: DBEngine, models: Models) -> None:
         self.db = db
         self.models = models
 
@@ -53,9 +54,7 @@ class CRUD:
             assert result, "Not found"
             response_result = self.response_model(**result)
         except AssertionError as exception:
-            raise CRUDException(
-                exception.args[0], status.HTTP_404_NOT_FOUND
-            ) from exception
+            raise CRUDException(exception.args[0], status.HTTP_404_NOT_FOUND) from exception
         except ValidationError as exception:
             raise CRUDException(exception.errors()) from exception
 
@@ -64,17 +63,15 @@ class CRUD:
     async def create(self, resource: Base) -> ResponseModel:
         resource_id = uuid4()
         resource_obj = resource.model_dump()
-        result = await self.db.create(resource_id, resource_obj)
+        result = await self.db.insert_one(resource_id=resource_id, resource_obj=resource_obj)
         return self._handle_result(result)
 
     async def read(self, resource_id: UUID) -> ResponseModel:
-        result = await self.db.read(resource_id)
+        result = await self.db.select_one(resource_id=resource_id)
         return self._handle_result(result)
 
     async def update(self, resource: Base, resource_id: UUID | None = None) -> ResponseModel:
-        _resource_id, resource_obj = (lambda id=None, **rest: (id, rest))(
-            **resource.model_dump()
-        )
+        _resource_id, resource_obj = (lambda id=None, **rest: (id, rest))(**resource.model_dump())
         try:
             assert any([_resource_id, resource_id]), "None id is defined"
             if all([_resource_id, resource_id]):
@@ -82,20 +79,18 @@ class CRUD:
         except AssertionError as _exception:
             raise CRUDException(repr(_exception), 404) from _exception
 
-        result = await self.db.update(_resource_id or resource_id, resource_obj)
+        result = await self.db.update_one(resource_id=(_resource_id or resource_id), resource_obj=resource_obj)
         return self._handle_result(result)
 
     async def delete(self, resource_id: UUID) -> None:
-        result = await self.db.delete(resource_id)
+        result = await self.db.delete_one(resource_id=resource_id)
         try:
             assert result is None, "Result is not none"
         except AssertionError as _exception:
-            raise CRUDException(
-                repr(_exception), status.HTTP_500_INTERNAL_SERVER_ERROR
-            ) from _exception
+            raise CRUDException(repr(_exception), status.HTTP_500_INTERNAL_SERVER_ERROR) from _exception
 
         return result
 
-    async def read_all(self) -> list[ResponseModel]:
-        result = await self.db.read_all()
+    async def read_many(self, paginate: dict = Depends(filter_parameters)) -> list[ResponseModel]:
+        result = await self.db.select_many(**paginate)
         return self._handle_list(result)

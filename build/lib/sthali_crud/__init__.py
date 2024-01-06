@@ -2,9 +2,10 @@ from typing import Callable
 
 from fastapi import APIRouter, FastAPI
 
+from sthali_db import DBEngine
+
 from .config import config_router, default_lifespan, load_and_parse_spec_file
 from .crud import CRUD
-from .db import DB
 from .models import Models
 from .types import AppSpecification
 
@@ -16,10 +17,10 @@ class SthaliCRUD:
         app = FastAPI(lifespan=lifespan)
         self.app = app
 
-        _db: dict[str, DB] = {}
+        _db: dict[str, DBEngine] = {}
         for resource in app_spec.resources:
             models = Models(resource.name, resource.fields)
-            db = DB(resource.db, resource.name)
+            db = DBEngine(resource.db, resource.name)
             crud = CRUD(db, models)
             router_cfg = config_router(crud, resource.name, models)
             router = APIRouter(prefix=router_cfg.prefix, tags=router_cfg.tags)  # type: ignore
@@ -30,6 +31,7 @@ class SthaliCRUD:
                     response_model=route.response_model,
                     methods=route.methods,  # type: ignore
                     status_code=route.status_code,
+                    dependencies=route.dependencies,
                 )
 
             self.app.include_router(router)

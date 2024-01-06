@@ -1,10 +1,11 @@
 from typing import Any, Callable, Literal
 
-from pydantic.dataclasses import dataclass
+from pydantic import Field, dataclasses
+
 from sthali_db import DBSpecification
 
 
-@dataclass
+@dataclasses.dataclass
 class FieldDefinition:
     """Field definition"""
 
@@ -14,7 +15,7 @@ class FieldDefinition:
     default_value: Any = None
 
 
-@dataclass
+@dataclasses.dataclass
 class ResourceSpecification:
     """Resource specification"""
 
@@ -23,14 +24,14 @@ class ResourceSpecification:
     fields: list[FieldDefinition]
 
 
-@dataclass
+@dataclasses.dataclass
 class AppSpecification:
     """App specification"""
 
     resources: list[ResourceSpecification]
 
 
-@dataclass
+@dataclasses.dataclass
 class RouteConfiguration:
     """Route Configuration"""
 
@@ -39,9 +40,10 @@ class RouteConfiguration:
     response_model: Any
     methods: list[Literal["GET", "POST", "PUT", "PATCH", "DELETE"]]
     status_code: int = 200
+    dependencies: list = Field(default_factory=list)
 
 
-@dataclass
+@dataclasses.dataclass
 class RouterConfiguration:
     """Router Configuration"""
 
