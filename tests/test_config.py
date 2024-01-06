@@ -1,17 +1,17 @@
-from unittest import TestCase, IsolatedAsyncioTestCase, mock
+from unittest import IsolatedAsyncioTestCase, TestCase, mock
 
 from src.sthali_crud.config import (
-    default_lifespan,
-    FastAPI,
-    replace_type_hint,
     ConfigException,
-    load_and_parse_spec_file,
-    config_router,
-    get_type,
-    load_spec_file,
+    FastAPI,
     Types,
+    config_router,
+    default_lifespan,
+    get_type,
+    load_and_parse_spec_file,
+    load_spec_file,
+    replace_type_hint,
 )
-from tests import DB_SPEC, FIELD_DEF, MockCRUD, MockDB, MockModels, RESOURCE_SPEC
+from tests import DB_SPEC, FIELD_DEF, RESOURCE_SPEC, MockCRUD, MockDB, MockModels
 
 
 class TestDefaultLifespan(IsolatedAsyncioTestCase):
@@ -49,13 +49,13 @@ class TestReplaceTypeHint(TestCase):
 
 
 class TestGetType(TestCase):
-    def test_get_type(self):
+    def test_success(self):
         type_str = "int"
 
         result = get_type(type_str)
         self.assertEqual(result, Types.int)
 
-    def test_get_type_invalid_type(self):
+    def test_invalid_type(self):
         type_str = "nonexistenttype"
 
         with self.assertRaises(ConfigException) as context:
@@ -63,7 +63,7 @@ class TestGetType(TestCase):
 
         self.assertEqual(str(context.exception), "Invalid type")
 
-    def test_get_type_case_insensitivity(self):
+    def test_case_insensitivity(self):
         type_str = "Int"
 
         result = get_type(type_str)
@@ -71,7 +71,7 @@ class TestGetType(TestCase):
 
 
 class TestLoadSpecFile(TestCase):
-    def test_load_spec_file_json(self):
+    def test_json(self):
         file_path = "test.json"
         file_content = '{"key": "value"}'
 
@@ -80,7 +80,7 @@ class TestLoadSpecFile(TestCase):
 
         self.assertEqual(result, {"key": "value"})
 
-    def test_load_spec_file_yaml(self):
+    def test_yaml(self):
         file_path = "test.yaml"
         file_content = "key: value"
 
@@ -89,7 +89,7 @@ class TestLoadSpecFile(TestCase):
 
         self.assertEqual(result, {"key": "value"})
 
-    def test_load_spec_file_raise_exception_when_invalid_extension(self):
+    def test_raise_exception_when_invalid_extension(self):
         file_path = "test.txt"
 
         with self.assertRaises(ConfigException) as context:
@@ -99,7 +99,7 @@ class TestLoadSpecFile(TestCase):
 
 
 class TestConfigRouter(TestCase):
-    def test_config_router(self) -> None:
+    def test_success(self) -> None:
         db = MockDB(DB_SPEC, "test_table")
         models = MockModels("test_model", [FIELD_DEF])
         crud = MockCRUD(db, models)
@@ -112,7 +112,7 @@ class TestConfigRouter(TestCase):
 class TestLoadAndParseSpecFile(TestCase):
     @mock.patch("src.sthali_crud.config.load_spec_file")
     @mock.patch("src.sthali_crud.config.get_type")
-    def test_load_and_parse_spec_file_json(self, mocked_get_type, mocked_load_spec_file):
+    def test_json(self, mocked_get_type, mocked_load_spec_file):
         mocked_get_type.return_value = int
         mocked_load_spec_file.return_value = {"resources": [{"fields": [{"type": "int"}]}]}
         file_path = "test.json"
@@ -122,7 +122,7 @@ class TestLoadAndParseSpecFile(TestCase):
 
     @mock.patch("src.sthali_crud.config.load_spec_file")
     @mock.patch("src.sthali_crud.config.get_type")
-    def test_load_and_parse_spec_file_yaml(self, mocked_get_type, mocked_load_spec_file):
+    def test_yaml(self, mocked_get_type, mocked_load_spec_file):
         mocked_get_type.return_value = int
         mocked_load_spec_file.return_value = {"resources": [{"fields": [{"type": "int"}]}]}
         file_path = "test.yaml"
@@ -130,8 +130,18 @@ class TestLoadAndParseSpecFile(TestCase):
         result = load_and_parse_spec_file(file_path)
         self.assertEqual(result, {"resources": [{"fields": [{"type": int}]}]})
 
+    # @mock.patch("src.sthali_crud.config.load_spec_file")
+    # @mock.patch("src.sthali_crud.config.get_type")
+    # def test_yaml(self, mocked_get_type, mocked_load_spec_file):
+    #     mocked_get_type.return_value = int
+    #     mocked_load_spec_file.return_value = {"resources": [{"fields": [{"type": "int"}]}]}
+    #     file_path = "test.yaml"
+
+    #     result = load_and_parse_spec_file(file_path)
+    #     self.assertEqual(result, {"resources": [{"fields": [{"type": int}]}]})
+
     @mock.patch("src.sthali_crud.config.load_spec_file")
-    def test_load_and_parse_spec_file_raise_exception_when_invalid_field_type(self, mocked_load_spec_file):
+    def test_raise_exception_when_invalid_field_type(self, mocked_load_spec_file):
         mocked_load_spec_file.return_value = {"resources": [{"fields": [{"type": ()}]}]}
         file_path = "test.yaml"
 
@@ -140,7 +150,7 @@ class TestLoadAndParseSpecFile(TestCase):
 
         self.assertEqual(str(context.exception), "Invalid field type")
 
-    def test_load_and_parse_spec_file_raise_exception_when_invalid_file_extension(self):
+    def test_raise_exception_when_invalid_file_extension(self):
         file_path = "test.txt"
 
         with self.assertRaises(ConfigException) as context:

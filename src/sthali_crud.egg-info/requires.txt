@@ -6,6 +6,7 @@ sthali-db
 
 [dev]
 coverage
+httpx
 mkdocs
 pytest
 ruff
@@ -19,4 +20,5 @@ uvicorn
 
 [tests]
 coverage
+httpx
 pytest

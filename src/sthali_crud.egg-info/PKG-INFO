@@ -18,12 +18,14 @@ Requires-Dist: pyyaml
 Requires-Dist: sthali-db
 Provides-Extra: dev
 Requires-Dist: coverage; extra == "dev"
+Requires-Dist: httpx; extra == "dev"
 Requires-Dist: mkdocs; extra == "dev"
 Requires-Dist: pytest; extra == "dev"
 Requires-Dist: ruff; extra == "dev"
 Requires-Dist: uvicorn; extra == "dev"
 Provides-Extra: tests
 Requires-Dist: coverage; extra == "tests"
+Requires-Dist: httpx; extra == "tests"
 Requires-Dist: pytest; extra == "tests"
 Provides-Extra: stage
 Requires-Dist: build; extra == "stage"

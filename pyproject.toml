@@ -17,8 +17,8 @@ classifiers = [
 dependencies = ["fastapi", "tinydb", "pydantic", "pyyaml", "sthali-db"]
 
 [project.optional-dependencies]
-dev = ["coverage", "mkdocs", "pytest", "ruff", "uvicorn"]
-tests = ["coverage", "pytest"]
+dev = ["coverage", "httpx", "mkdocs", "pytest", "ruff", "uvicorn"]
+tests = ["coverage", "httpx", "pytest"]
 stage = ["build", "coverage", "pytest", "uvicorn"]
 
 [project.urls]
@@ -29,7 +29,8 @@ stage = ["build", "coverage", "pytest", "uvicorn"]
 testpaths = ["tests"]
 
 [tool.coverage.report]
-omit = ["tests/*"]
+omit = ["tests/*", "sthali_db/*"]
+show_missing = true
 
 [tool.coverage.run]
 branch = true

@@ -1,6 +1,7 @@
 from typing import Any, Callable, Literal
 
-from pydantic import dataclasses, Field
+from pydantic import Field, dataclasses
+
 from sthali_db import DBSpecification
 
 
