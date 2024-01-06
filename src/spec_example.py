@@ -1,10 +1,7 @@
-from os import path
-
-TINYDB_PATH = path.join(path.dirname(__file__), "../volume/tinydb.json")
 EXAMPLE_SPEC = {
     "resources": [
         {
-            "db": {"engine": "virtual", "path": TINYDB_PATH},
+            "db": {"engine": "Default", "path": ""},
             "name": "samples",
             "fields": [
                 {

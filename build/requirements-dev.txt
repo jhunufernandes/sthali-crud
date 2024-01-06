@@ -1,7 +1,0 @@
--r requirements.txt
-coverage
-httpx
-mkdocs
-pytest
-ruff
-uvicorn

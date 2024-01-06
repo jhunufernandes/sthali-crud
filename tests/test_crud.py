@@ -33,9 +33,7 @@ class TestCRUD(IsolatedAsyncioTestCase):
         with self.assertRaises(CRUDException) as context:
             self.crud._handle_list(result_input)
 
-        self.assertEqual(
-            context.exception.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY
-        )
+        self.assertEqual(context.exception.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)
         self.assertIn("Not found", context.exception.detail)
 
     def test_handle_list_raise_crud_exception_when_validation_error(self):
@@ -44,9 +42,7 @@ class TestCRUD(IsolatedAsyncioTestCase):
         with self.assertRaises(CRUDException) as context:
             self.crud._handle_list(result_input)
 
-        self.assertEqual(
-            context.exception.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY
-        )
+        self.assertEqual(context.exception.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)
 
     def test_handle_result(self):
         response_model = self.models.response_model
@@ -70,9 +66,7 @@ class TestCRUD(IsolatedAsyncioTestCase):
         with self.assertRaises(CRUDException) as context:
             self.crud._handle_result(result_input)
 
-        self.assertEqual(
-            context.exception.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY
-        )
+        self.assertEqual(context.exception.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)
 
     @mock.patch("src.sthali_crud.crud.CRUD._handle_result")
     async def test_create(self, mock_handle_result):
@@ -134,9 +128,7 @@ class TestCRUD(IsolatedAsyncioTestCase):
         with self.assertRaises(CRUDException) as context:
             await self.crud.delete(ID)
 
-        self.assertEqual(
-            context.exception.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        self.assertEqual(context.exception.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
         self.assertIn("Result is not none", context.exception.detail)
 
     @mock.patch("src.sthali_crud.crud.CRUD._handle_list")

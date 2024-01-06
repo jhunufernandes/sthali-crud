@@ -5,7 +5,7 @@ from src.sthali_crud import crud, db, models, types
 
 # APP CONSTANTS
 DB_SPEC = types.DBSpecification(
-    engine="virtual",
+    engine="Default",
     path="",
 )
 FIELD_DEF = types.FieldDefinition(

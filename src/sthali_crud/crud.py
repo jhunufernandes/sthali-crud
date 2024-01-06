@@ -1,11 +1,13 @@
 from uuid import UUID, uuid4
 
 from fastapi import HTTPException, status
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError
 from pydantic_core import ErrorDetails
 
 from .db import DB
-from .models import Models
+from .models import Base, Models
+
+ResponseModel = Base
 
 
 class CRUDException(HTTPException):
@@ -26,21 +28,18 @@ class CRUD:
         self.models = models
 
     @property
-    def response_model(self):
+    def response_model(self) -> type[Base]:
         return self.models.response_model
 
-    def _handle_list(self, result: list[dict]) -> list[BaseModel]:
+    def _handle_list(self, result: list[dict]) -> list[ResponseModel]:
         errors = []
         response_result = []
 
         for r in result:
             try:
-                assert r, "Not found"
-                response_result.append(self.response_model(**r))
-            except AssertionError as exception:
-                errors.append(exception.args[0])
-            except ValidationError as exception:
-                errors.append(exception.errors())
+                response_result.append(self._handle_result(r))
+            except CRUDException as exception:
+                errors.append(exception.detail)
 
         try:
             assert not errors
@@ -49,33 +48,29 @@ class CRUD:
 
         return response_result
 
-    def _handle_result(self, result: dict | None) -> BaseModel:
+    def _handle_result(self, result: dict | None) -> ResponseModel:
         try:
             assert result, "Not found"
             response_result = self.response_model(**result)
         except AssertionError as exception:
-            raise CRUDException(
-                exception.args[0], status.HTTP_404_NOT_FOUND
-            ) from exception
+            raise CRUDException(exception.args[0], status.HTTP_404_NOT_FOUND) from exception
         except ValidationError as exception:
             raise CRUDException(exception.errors()) from exception
 
         return response_result
 
-    async def create(self, resource: BaseModel):
+    async def create(self, resource: Base) -> ResponseModel:
         resource_id = uuid4()
         resource_obj = resource.model_dump()
         result = await self.db.create(resource_id, resource_obj)
         return self._handle_result(result)
 
-    async def read(self, resource_id: UUID):
+    async def read(self, resource_id: UUID) -> ResponseModel:
         result = await self.db.read(resource_id)
         return self._handle_result(result)
 
-    async def update(self, resource: BaseModel, resource_id: UUID | None = None):
-        _resource_id, resource_obj = (lambda id=None, **rest: (id, rest))(
-            **resource.model_dump()
-        )
+    async def update(self, resource: Base, resource_id: UUID | None = None) -> ResponseModel:
+        _resource_id, resource_obj = (lambda id=None, **rest: (id, rest))(**resource.model_dump())
         try:
             assert any([_resource_id, resource_id]), "None id is defined"
             if all([_resource_id, resource_id]):
@@ -95,6 +90,6 @@ class CRUD:
 
         return result
 
-    async def read_all(self) -> list[BaseModel]:
+    async def read_all(self) -> list[ResponseModel]:
         result = await self.db.read_all()
         return self._handle_list(result)
