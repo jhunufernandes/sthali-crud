@@ -159,30 +159,5 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-
-# Byte-compiled / optimized / DLL files
-__pycache__/
-build/
-dist/
-.coverage
-*.egg-info/
-
-# Cache directories
-*_cache
-
-# DB volumes
-tinydb.json
-
-# Editor files
-.vscode
-
-# Local dependencies
-sthali_db
+/volume
+/sthali_db
