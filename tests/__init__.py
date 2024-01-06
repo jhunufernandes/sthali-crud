@@ -1,11 +1,11 @@
 from unittest.mock import AsyncMock
 from uuid import uuid4
 
-from src.sthali_crud import crud, db, models, types
+from src.sthali_crud import DBEngine, crud, models, types
 
 # APP CONSTANTS
 DB_SPEC = types.DBSpecification(
-    engine="virtual",
+    engine="Default",
     path="",
 )
 FIELD_DEF = types.FieldDefinition(
@@ -35,7 +35,7 @@ READ = AsyncMock(return_value=PAYLOAD_WITH_ID)
 UPDATE = AsyncMock(return_value=PAYLOAD_WITH_ID)
 UPSERT = AsyncMock(return_value=PAYLOAD_WITH_ID)
 DELETE = AsyncMock(return_value=None)
-READ_ALL = AsyncMock(return_value=[PAYLOAD_WITH_ID])
+READ_MANY = AsyncMock(return_value=[PAYLOAD_WITH_ID])
 
 
 class MockCRUD(crud.CRUD):
@@ -44,19 +44,19 @@ class MockCRUD(crud.CRUD):
     update = UPDATE
     upsert = UPSERT
     delete = DELETE
-    read_all = READ_ALL
+    read_MANY = READ_MANY
 
 
-class MockDB(db.DB):
-    create = CREATE
-    read = READ
-    update = UPDATE
-    delete = DELETE
-    read_all = READ_ALL
+class MockDB(DBEngine):
+    insert_one = CREATE
+    select_one = READ
+    update_one = UPDATE
+    delete_one = DELETE
+    select_many = READ_MANY
 
 
 class MockModels(models.Models):
-    create_model = models.BaseModel
-    response_model = models.BaseModel
-    update_model = models.BaseModel
-    upsert_model = models.BaseModel
+    create_model = models.Base
+    response_model = models.Base
+    update_model = models.Base
+    upsert_model = models.Base

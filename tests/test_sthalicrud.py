@@ -18,10 +18,10 @@ class TestSthaliCRUD:
     client = TestClient(SthaliCRUD(APP_SPEC).app)
 
 
-@patch("src.sthali_crud.db.DB.create", MockDB.create)
-@patch("src.sthali_crud.db.DB.read", MockDB.read)
-@patch("src.sthali_crud.db.DB.update", MockDB.update)
-@patch("src.sthali_crud.db.DB.delete", MockDB.delete)
+@patch("src.sthali_crud.DBEngine.insert_one", MockDB.insert_one)
+@patch("src.sthali_crud.DBEngine.select_one", MockDB.select_one)
+@patch("src.sthali_crud.DBEngine.update_one", MockDB.update_one)
+@patch("src.sthali_crud.DBEngine.delete_one", MockDB.delete_one)
 class TestReturn20XSuccesful(TestSthaliCRUD):
     json = PAYLOAD_WITH_ID_STR
     status_code = status.HTTP_200_OK

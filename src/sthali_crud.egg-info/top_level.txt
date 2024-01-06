@@ -1,0 +1,3 @@
+run
+spec_example
+sthali_crud

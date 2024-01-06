@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from src.sthali_crud.models import UUID, BaseModel, Models
-from tests import RESOURCE_SPEC, PAYLOAD_WITHOUT_ID, PAYLOAD_WITH_ID
+from src.sthali_crud.models import UUID, Base, Models
+from tests import PAYLOAD_WITH_ID, PAYLOAD_WITHOUT_ID, RESOURCE_SPEC
 
 
 class TestModels(TestCase):
@@ -45,7 +45,7 @@ class TestModels(TestCase):
         self.assertIsInstance(result_without_id, upsert_model)
 
     def test_define_model(self):
-        base = BaseModel
+        base = Base
         name = "test_model"
         fields = RESOURCE_SPEC.fields
         model = Models.define_model(base, name, fields)

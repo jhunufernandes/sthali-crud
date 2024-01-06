@@ -31,9 +31,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          if [ -f build/requirements.txt ]; then pip install -r build/requirements.txt; fi
+          python -m pip install .[tests]
 
       - name: Testing
         run: |
-          pip install pytest httpx
           python -m pytest

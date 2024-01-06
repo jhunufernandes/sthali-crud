@@ -7,8 +7,10 @@ ENV/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
+build/
 dist/
 .coverage
+*.egg-info/
 
 # Cache directories
 *_cache
@@ -18,3 +20,6 @@ tinydb.json
 
 # Editor files
 .vscode
+
+# Local dependencies
+sthali_db
