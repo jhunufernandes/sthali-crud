@@ -27,17 +27,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          if [ -f build/requirements.txt ]; then pip install -r build/requirements.txt; fi
+          python -m pip install .[stage]
 
       - name: Testing
         run: |
-          pip install pytest httpx
           python -m pytest
 
       - name: Build package
         run: |
-          pip install build
-          python -m build ./build/ -o ./dist
+          python -m build -o ./dist
 
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@release/v1
