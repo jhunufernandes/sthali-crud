@@ -14,19 +14,12 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
 ]
-dependencies = ["fastapi", "tinydb", "pydantic", "pyyaml"]
+dependencies = ["fastapi", "tinydb", "pydantic", "pyyaml", "sthali-db"]
 
 [project.optional-dependencies]
-dev = [
-  "coverage",
-  "mkdocs",
-  "pytest",
-  "ruff",
-  "sthali-db @ file:///home/jhunu/Documents/sthali-db/",
-  "uvicorn",
-]
+dev = ["coverage", "mkdocs", "pytest", "ruff", "uvicorn"]
 tests = ["coverage", "pytest"]
-stage = ["build", "coverage", "pytest", "sthali-db", "uvicorn"]
+stage = ["build", "coverage", "pytest", "uvicorn"]
 
 [project.urls]
 "Homepage" = "https://github.com/jhunufernandes/sthali-crud"
@@ -41,3 +34,6 @@ omit = ["tests/*"]
 [tool.coverage.run]
 branch = true
 command_line = "-m pytest"
+
+[tool.ruff]
+line-length = 120

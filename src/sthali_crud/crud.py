@@ -53,9 +53,7 @@ class CRUD:
             assert result, "Not found"
             response_result = self.response_model(**result)
         except AssertionError as exception:
-            raise CRUDException(
-                exception.args[0], status.HTTP_404_NOT_FOUND
-            ) from exception
+            raise CRUDException(exception.args[0], status.HTTP_404_NOT_FOUND) from exception
         except ValidationError as exception:
             raise CRUDException(exception.errors()) from exception
 
@@ -72,9 +70,7 @@ class CRUD:
         return self._handle_result(result)
 
     async def update(self, resource: Base, resource_id: UUID | None = None) -> ResponseModel:
-        _resource_id, resource_obj = (lambda id=None, **rest: (id, rest))(
-            **resource.model_dump()
-        )
+        _resource_id, resource_obj = (lambda id=None, **rest: (id, rest))(**resource.model_dump())
         try:
             assert any([_resource_id, resource_id]), "None id is defined"
             if all([_resource_id, resource_id]):
@@ -90,9 +86,7 @@ class CRUD:
         try:
             assert result is None, "Result is not none"
         except AssertionError as _exception:
-            raise CRUDException(
-                repr(_exception), status.HTTP_500_INTERNAL_SERVER_ERROR
-            ) from _exception
+            raise CRUDException(repr(_exception), status.HTTP_500_INTERNAL_SERVER_ERROR) from _exception
 
         return result
 

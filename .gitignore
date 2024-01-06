@@ -20,3 +20,6 @@ tinydb.json
 
 # Editor files
 .vscode
+
+# Local dependencies
+sthali_db
