@@ -29,6 +29,10 @@ class AppSpecification:
     """App specification"""
 
     resources: list[ResourceSpecification]
+    description: str = "A FastAPI package for CRUD operations"
+    summary: str | None = None
+    title: str = "SthaliCRUD"
+    version: str = "0.1.0"
 
 
 @dataclasses.dataclass

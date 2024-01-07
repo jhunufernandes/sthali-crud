@@ -8,7 +8,7 @@ if [ "$ENV" = 'DOCKER' ]; then
 elif [ "$ENV" = 'LOCAL' ]; then
     echo "Running local"
     cd ./src/
-    exec uvicorn run:app --host 0.0.0.0 --port 9000
+    exec uvicorn run:app --host 0.0.0.0 --port 9000 --reload
 else
     echo "No ENV found, nothing to run!!!"
 fi

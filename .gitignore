@@ -11,11 +11,11 @@ dist
 # Cache directories
 *_cache
 
-# Volumes
-volume/tinydb.json
-
 # Editor files
 .vscode
+
+# Volumes
+volume/tinydb.json
 
 # Local libs
 sthali_db
