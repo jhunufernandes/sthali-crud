@@ -15,7 +15,5 @@ dist
 .vscode
 
 # Volumes
-volume/tinydb.json
-
-# Local libs
-sthali_db
+/volume
+/sthali_db
