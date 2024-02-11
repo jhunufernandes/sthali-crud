@@ -14,7 +14,13 @@ class SthaliCRUD:
     app: FastAPI
 
     def __init__(self, app_spec: AppSpecification, lifespan: Callable = default_lifespan) -> None:
-        app = FastAPI(lifespan=lifespan)
+        app = FastAPI(
+            lifespan=lifespan,
+            title=app_spec.title,
+            summary=app_spec.summary,
+            description=app_spec.description,
+            version=app_spec.version,
+        )
         self.app = app
 
         _db: dict[str, DBEngine] = {}
