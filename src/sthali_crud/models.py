@@ -1,20 +1,17 @@
-from uuid import UUID
+import typing
+import uuid
 
-from pydantic import BaseModel, create_model
+import pydantic
 
 from .types import FieldDefinition
 
 
-class Base(BaseModel):
+class Base(pydantic.BaseModel):
     pass
 
 
 class BaseWithId(Base):
-    id: UUID
-
-
-class BaseWithIdOptional(Base):
-    id: UUID | None = None
+    id: typing.Annotated[uuid.UUID, pydantic.Field(description="Resource identifier")]
 
 
 class Models:
@@ -22,20 +19,22 @@ class Models:
     create_model: type[Base]
     response_model: type[Base]
     update_model: type[Base]
-    upsert_model: type[Base]
 
     def __init__(self, name: str, fields: list[FieldDefinition]) -> None:
         self.name = name
         self.create_model = self.define_model(Base, f"Create{name.title()}", fields)
         self.response_model = self.define_model(BaseWithId, f"Response{name.title()}", fields)
-        self.update_model = self.define_model(BaseWithId, f"Update{name.title()}", fields)
-        self.upsert_model = self.define_model(BaseWithIdOptional, f"Upsert{name.title()}", fields)
+        self.update_model = self.define_model(Base, f"Update{name.title()}", fields)
 
     @staticmethod
     def define_model(base: type[Base], name: str, fields: list[FieldDefinition]) -> type[Base]:
         fields_constructor = {}
         for field in fields:
-            field_default_value = (..., field.default_value)[bool(field.default_value or field.has_default)]
-            fields_constructor[field.name] = (field.type, field_default_value)
+            field_type = (field.type, field.type | None)[bool(field.allow_none)]
+            pydantic_field = pydantic.Field(description=field.description or f"Field {field.name}")
+            if field.has_default or field.default_value:
+                pydantic_field.default = field.default_value
 
-        return create_model(__model_name=name, __base__=base, **fields_constructor)  # type: ignore
+            fields_constructor[field.name] = typing.Annotated[field_type, pydantic_field]
+
+        return pydantic.create_model(__model_name=name, __base__=base, **fields_constructor)  # type: ignore

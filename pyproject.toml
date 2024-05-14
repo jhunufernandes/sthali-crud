@@ -14,7 +14,7 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
 ]
-dependencies = ["fastapi", "tinydb", "pydantic", "pyyaml", "sthali-db"]
+dependencies = ["fastapi >= 0.111.0", "tinydb", "pydantic >= 2.7", "pyyaml", "sthali-db"]
 
 [project.optional-dependencies]
 dev = ["coverage", "httpx", "mkdocs", "pytest", "ruff", "uvicorn"]

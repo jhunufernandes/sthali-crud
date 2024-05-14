@@ -1,30 +1,32 @@
-from typing import Any, Callable, Literal
+import typing
 
-from pydantic import Field, dataclasses
+import pydantic
 
-from sthali_db import DBSpecification
+import sthali_db
 
 
-@dataclasses.dataclass
+@pydantic.dataclasses.dataclass
 class FieldDefinition:
     """Field definition"""
 
     name: str
-    type: Any
+    type: typing.Any
+    default_value: typing.Any = None
     has_default: bool = False  # needed only if default_value is None
-    default_value: Any = None
+    allow_none: bool = False
+    description: str | None = None
 
 
-@dataclasses.dataclass
+@pydantic.dataclasses.dataclass
 class ResourceSpecification:
     """Resource specification"""
 
-    db: DBSpecification
+    db: sthali_db.DBSpecification
     name: str
     fields: list[FieldDefinition]
 
 
-@dataclasses.dataclass
+@pydantic.dataclasses.dataclass
 class AppSpecification:
     """App specification"""
 
@@ -35,19 +37,20 @@ class AppSpecification:
     version: str = "0.1.0"
 
 
-@dataclasses.dataclass
+@pydantic.dataclasses.dataclass
 class RouteConfiguration:
     """Route Configuration"""
 
     path: str
-    endpoint: Callable[..., Any]
-    response_model: Any
-    methods: list[Literal["GET", "POST", "PUT", "PATCH", "DELETE"]]
+    endpoint: typing.Callable[..., typing.Any]
+    response_model: typing.Any
+    methods: list[typing.Literal["GET", "POST", "PUT", "PATCH", "DELETE"]]
     status_code: int = 200
-    dependencies: list = Field(default_factory=list)
+    dependencies: list = pydantic.Field(default_factory=list)
+    name: str | None = None
 
 
-@dataclasses.dataclass
+@pydantic.dataclasses.dataclass
 class RouterConfiguration:
     """Router Configuration"""
 
