@@ -7,9 +7,8 @@ import pydantic_core
 
 import sthali_db
 
-from .models import Base, Models
 
-ResponseModel = Base
+ResponseModel = sthali_db.models.BaseWithId
 
 
 class CRUDException(fastapi.HTTPException):
@@ -22,15 +21,12 @@ class CRUDException(fastapi.HTTPException):
 
 
 class CRUD:
-    db: sthali_db.DBEngine
-    models: Models
-
-    def __init__(self, db: sthali_db.DBEngine, models: Models) -> None:
+    def __init__(self, db: sthali_db.DBClient, models: sthali_db.Models) -> None:
         self.db = db
         self.models = models
 
     @property
-    def response_model(self) -> type[Base]:
+    def response_model(self) -> type[ResponseModel]:
         return self.models.response_model
 
     def _handle_list(self, result: list[dict]) -> list[ResponseModel]:
@@ -59,9 +55,8 @@ class CRUD:
             raise CRUDException(exception.errors()) from exception
         return response_result
 
-    async def create(self, resource: Base) -> ResponseModel:
-        """
-        Create a new resource.
+    async def create(self, resource: sthali_db.Base) -> ResponseModel:
+        """Create a new resource.
 
         Args:
             resource (Base): The resource object to be created.
@@ -75,8 +70,7 @@ class CRUD:
         return self._handle_result(result)
 
     async def read(self, resource_id: uuid.UUID) -> ResponseModel:
-        """
-        Retrieves a resource from the database based on the given resource ID.
+        """Retrieves a resource from the database based on the given resource ID.
 
         Args:
             resource_id (uuid.UUID): The ID of the resource to retrieve.
@@ -89,8 +83,7 @@ class CRUD:
         return self._handle_result(result)
 
     async def update(self, request: fastapi.Request, resource_id: uuid.UUID, resource: Base) -> ResponseModel:
-        """
-        Update a resource in the database.
+        """Update a resource in the database.
 
         Args:
             request (fastapi.Request): The FastAPI request object.
@@ -106,8 +99,7 @@ class CRUD:
         return self._handle_result(result)
 
     async def delete(self, resource_id: uuid.UUID) -> None:
-        """
-        Deletes a resource with the given resource_id.
+        """Deletes a resource with the given resource_id.
 
         Args:
             resource_id (uuid.UUID): The ID of the resource to delete.
@@ -125,9 +117,8 @@ class CRUD:
             raise CRUDException(repr(_exception), fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR) from _exception
         return result
 
-    async def read_many(self, paginate: typing.Annotated[dict, fastapi.Depends(sthali_db.paginate_parameters)]) -> list[ResponseModel]:
-        """
-        Retrieves multiple records from the database based on pagination parameters.
+    async def read_many(self, paginate: typing.Annotated[dict, fastapi.Depends(sthali_db.PaginateParameters)]) -> list[ResponseModel]:
+        """Retrieves multiple records from the database based on pagination parameters.
 
         Args:
             paginate: Pagination parameters for selecting multiple records. The `paginate` parameter should containing the following args:

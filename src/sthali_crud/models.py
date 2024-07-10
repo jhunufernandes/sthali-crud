@@ -2,9 +2,7 @@ import typing
 import uuid
 
 import pydantic
-
-from .types import FieldDefinition
-
+import sthali_db
 
 class Base(pydantic.BaseModel):
     pass
@@ -20,14 +18,14 @@ class Models:
     response_model: type[Base]
     update_model: type[Base]
 
-    def __init__(self, name: str, fields: list[FieldDefinition]) -> None:
+    def __init__(self, name: str, fields: list[sthali_db.Field]) -> None:
         self.name = name
         self.create_model = self.define_model(Base, f"Create{name.title()}", fields)
         self.response_model = self.define_model(BaseWithId, f"Response{name.title()}", fields)
         self.update_model = self.define_model(Base, f"Update{name.title()}", fields)
 
     @staticmethod
-    def define_model(base: type[Base], name: str, fields: list[FieldDefinition]) -> type[Base]:
+    def define_model(base: type[Base], name: str, fields: list[sthali_db.Field]) -> type[Base]:
         fields_constructor = {}
         for field in fields:
             field_type = (field.type, field.type | None)[bool(field.allow_none)]
