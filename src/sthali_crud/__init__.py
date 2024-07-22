@@ -1,51 +1,77 @@
 """{...}."""
-import contextlib
-import logging
-import typing
 
-import fastapi
-import pydantic
+from collections.abc import Callable
+from contextlib import asynccontextmanager
+from logging import info
+from typing import Annotated
 
-import sthali_db
+from fastapi import FastAPI
+from pydantic import Field
+from pydantic.dataclasses import dataclass
+
+from sthali_db import DB, DBSpecification, FieldDefinition, Models
 
 from .config import load_and_parse_spec_file
-# from .router import Router
+from .crud import CRUD
+from .router import Router
 
-# from .crud import CRUD
 
-
-@pydantic.dataclasses.dataclass
+@dataclass
 class ResourceSpecification:
-    """Resource specification."""
+    """Represents the specification of the resource.
 
-    db: sthali_db.DBSpecification
-    name: str
-    fields: list[sthali_db.Field]
+    Attributes:
+        db (DBSpecification): The database specification for the resource.
+        name (str): The name of the resource.
+        fields (list[FieldDefinition]): The list of field definitions for the resource.
+    """
+
+    db: Annotated[DBSpecification, Field(description="The database specification for the resource")]
+    name: Annotated[str, Field(description="The name of the resource")]
+    fields: Annotated[list[FieldDefinition], Field(description="The list of field definitions for the resource")]
 
 
-@pydantic.dataclasses.dataclass
+@dataclass
 class AppSpecification:
-    """App specification."""
+    """Represents the specification of a SthaliCRUD application.
 
-    resources: list[ResourceSpecification]
-    description: str = "A FastAPI package for CRUD operations"
-    summary: str | None = None
-    title: str = "SthaliCRUD"
-    version: str = "0.1.0"
+    Attributes:
+        resources (List[ResourceSpecification]): The list of resource specifications.
+        description (str): The description of the application. Default value is "A FastAPI package for CRUD operations".
+        summary (str | None): The summary of the application. Default value is None.
+        title (str): The title of the application. Default value is "SthaliCRUD".
+        version (str): The version of the application. Default value is "0.1.0".
+    """
+
+    resources: Annotated[
+        list[ResourceSpecification], Field(default_factory=list, description="The list of resource specifications")
+    ]
+    description: Annotated[
+        str, Field(default="A FastAPI package for CRUD operations", description="The description of the application")
+    ]
+    summary: Annotated[str | None, Field(default=None, description="The summary of the application")]
+    title: Annotated[str, Field(default="SthaliCRUD", description="The title of the application")]
+    version: Annotated[str, Field(default="0.1.0", description="The version of the application")]
 
 
-@contextlib.asynccontextmanager
-async def default_lifespan(app: fastapi.FastAPI):
-    logging.info("Startup SthaliCRUD")
+@asynccontextmanager
+async def default_lifespan(app: FastAPI):
+    """A context manager that handles the startup and shutdown of SthaliCRUD.
+
+    Args:
+        app (FastAPI): The FastAPI application instance.
+
+    Yields:
+        None
+    """
+    info("Startup SthaliCRUD")
     yield
-    logging.info("Shutdown SthaliCRUD")
+    info("Shutdown SthaliCRUD")
 
 
 class SthaliCRUD:
-    app: fastapi.FastAPI
-
-    def __init__(self, app_spec: AppSpecification, lifespan: typing.Callable = default_lifespan) -> None:
-        app = fastapi.FastAPI(
+    def __init__(self, app_spec: AppSpecification, lifespan: Callable = default_lifespan) -> None:
+        app = FastAPI(
             lifespan=lifespan,
             title=app_spec.title,
             summary=app_spec.summary,
@@ -54,25 +80,14 @@ class SthaliCRUD:
         )
         self.app = app
 
-        _db: dict[str, sthali_db.DBClient] = {}
+        _db: dict[str, DB] = {}
         for resource in app_spec.resources:
-            models = sthali_db.Models(resource.name, resource.fields)
-        #     db = sthali_db.DBClient(resource.db, resource.name)
-        #     crud = CRUD(db, models)
-        #     router_cfg = config_router(crud, resource.name, models)
-        #     router = fastapi.APIRouter(prefix=router_cfg.prefix, tags=router_cfg.tags)  # type: ignore
-        #     for route in router_cfg.routes:
-        #         router.add_api_route(
-        #             path=route.path,
-        #             endpoint=route.endpoint,
-        #             response_model=route.response_model,
-        #             methods=route.methods,  # type: ignore
-        #             status_code=route.status_code,
-        #             dependencies=route.dependencies,
-        #         )
-
-        #     self.app.include_router(router)
-        #     _db[resource.name] = db
+            models = Models(resource.name, resource.fields)
+            db = DB(resource.db, resource.name)
+            crud = CRUD(db, models)
+            router = Router(crud, resource.name, models)
+            self.app.include_router(router.api_router)
+            _db[resource.name] = db
         self.app.extra["db"] = _db
 
 

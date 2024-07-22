@@ -1,27 +1,28 @@
-import typing
-import uuid
+from typing import Annotated
+from uuid import UUID, uuid4
 
-import fastapi
-import pydantic
-import pydantic_core
+from fastapi import Depends, HTTPException, Request, status
+from pydantic import ValidationError
+from pydantic_core import ErrorDetails
 
-import sthali_db
-
-
-ResponseModel = sthali_db.models.BaseWithId
+from sthali_db import DB, Models, PaginateParameters
+from sthali_db.models import Base, BaseWithId
 
 
-class CRUDException(fastapi.HTTPException):
+ResponseModel = BaseWithId
+
+
+class CRUDException(HTTPException):
     def __init__(
         self,
-        detail: str | list[pydantic_core.ErrorDetails],
-        status_code: int = fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY,
+        detail: str | list[ErrorDetails],
+        status_code: int = status.HTTP_422_UNPROCESSABLE_ENTITY,
     ) -> None:
         super().__init__(status_code, detail)
 
 
 class CRUD:
-    def __init__(self, db: sthali_db.DBClient, models: sthali_db.Models) -> None:
+    def __init__(self, db: DB, models: Models) -> None:
         self.db = db
         self.models = models
 
@@ -50,12 +51,12 @@ class CRUD:
             assert result, "Not found"
             response_result = self.response_model(**result)
         except AssertionError as exception:
-            raise CRUDException(exception.args[0], fastapi.status.HTTP_404_NOT_FOUND) from exception
-        except pydantic.ValidationError as exception:
+            raise CRUDException(exception.args[0], status.HTTP_404_NOT_FOUND) from exception
+        except ValidationError as exception:
             raise CRUDException(exception.errors()) from exception
         return response_result
 
-    async def create(self, resource: sthali_db.Base) -> ResponseModel:
+    async def create(self, resource: Base) -> ResponseModel:
         """Create a new resource.
 
         Args:
@@ -64,16 +65,16 @@ class CRUD:
         Returns:
             ResponseModel: The response model containing the result of the operation.
         """
-        resource_id = uuid.uuid4()
+        resource_id = uuid4()
         resource_obj = resource.model_dump()
         result = await self.db.insert_one(resource_id=resource_id, resource_obj=resource_obj)
         return self._handle_result(result)
 
-    async def read(self, resource_id: uuid.UUID) -> ResponseModel:
+    async def read(self, resource_id: UUID) -> ResponseModel:
         """Retrieves a resource from the database based on the given resource ID.
 
         Args:
-            resource_id (uuid.UUID): The ID of the resource to retrieve.
+            resource_id (UUID): The ID of the resource to retrieve.
 
         Returns:
             ResponseModel: The retrieved resource.
@@ -82,12 +83,12 @@ class CRUD:
         result = await self.db.select_one(resource_id=resource_id)
         return self._handle_result(result)
 
-    async def update(self, request: fastapi.Request, resource_id: uuid.UUID, resource: Base) -> ResponseModel:
+    async def update(self, request: Request, resource_id: UUID, resource: Base) -> ResponseModel:
         """Update a resource in the database.
 
         Args:
-            request (fastapi.Request): The FastAPI request object.
-            resource_id (uuid.UUID): The ID of the resource to update.
+            request (Request): The FastAPI request object.
+            resource_id (UUID): The ID of the resource to update.
             resource (Base): The resource object containing the updated data.
 
         Returns:
@@ -98,11 +99,11 @@ class CRUD:
         result = await self.db.update_one(resource_id=resource_id, resource_obj=resource_obj, partial=partial)
         return self._handle_result(result)
 
-    async def delete(self, resource_id: uuid.UUID) -> None:
+    async def delete(self, resource_id: UUID) -> None:
         """Deletes a resource with the given resource_id.
 
         Args:
-            resource_id (uuid.UUID): The ID of the resource to delete.
+            resource_id (UUID): The ID of the resource to delete.
 
         Raises:
             CRUDException: If the deletion fails.
@@ -114,19 +115,20 @@ class CRUD:
         try:
             assert result is None, "Result is not none"
         except AssertionError as _exception:
-            raise CRUDException(repr(_exception), fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR) from _exception
+            raise CRUDException(repr(_exception), status.HTTP_500_INTERNAL_SERVER_ERROR) from _exception
         return result
 
-    async def read_many(self, paginate: typing.Annotated[dict, fastapi.Depends(sthali_db.PaginateParameters)]) -> list[ResponseModel]:
+    async def read_many(self, paginate_parameters: Annotated[dict, Depends(PaginateParameters)]) -> list[ResponseModel]:
         """Retrieves multiple records from the database based on pagination parameters.
 
         Args:
-            paginate: Pagination parameters for selecting multiple records. The `paginate` parameter should containing the following args:
+            paginate_parameters: Pagination parameters for selecting multiple records. The `paginate` parameter should containing
+                the following args:
                 - `page` (int): The page number to retrieve.
                 - `limit` (int): The maximum number of records to retrieve per page.
 
         Returns:
             list[ResponseModel]: A list of response models representing the retrieved records.
         """
-        result = await self.db.select_many(**paginate)
+        result = await self.db.select_many(paginate_parameters)
         return self._handle_list(result)
