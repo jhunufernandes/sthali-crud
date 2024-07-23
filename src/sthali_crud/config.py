@@ -1,11 +1,12 @@
 import json
 import typing
+from typing import Any
 
 import yaml
 
 
 class Types:
-    any = typing.Any
+    any = Any
     none = None
     bool = bool
     true = True
@@ -22,14 +23,14 @@ class ConfigException(Exception):
         super().__init__(*args)
 
 
-def get_type(type_str: str) -> typing.Any:
+def get_type(type_str: str) -> Any:
     """Get the type based on the given type string.
 
     Args:
         type_str (str): The type string.
 
     Returns:
-        typing.Any: The corresponding type.
+        Any: The corresponding type.
 
     Raises:
         ConfigException: If the type string is invalid.
@@ -41,7 +42,7 @@ def get_type(type_str: str) -> typing.Any:
         raise ConfigException("Invalid type") from exception
 
 
-def load_and_parse_spec_file(spec_file_path: str) -> dict:
+def load_and_parse_spec_file(spec_file_path: str) -> dict[str, Any]:
     spec_dict = load_spec_file(spec_file_path)
 
     for resource in spec_dict["resources"]:

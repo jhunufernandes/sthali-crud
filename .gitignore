@@ -11,9 +11,6 @@ dist
 # Cache directories
 *_cache
 
-# Editor files
-.vscode
-
 # Volumes
 /volume
 /sthali_db

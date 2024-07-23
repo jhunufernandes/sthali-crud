@@ -3,7 +3,7 @@
 from collections.abc import Callable
 from contextlib import asynccontextmanager
 from logging import info
-from typing import Annotated
+from typing import Any, Annotated
 
 from fastapi import FastAPI
 from pydantic import Field
@@ -70,7 +70,7 @@ async def default_lifespan(app: FastAPI):
 
 
 class SthaliCRUD:
-    def __init__(self, app_spec: AppSpecification, lifespan: Callable = default_lifespan) -> None:
+    def __init__(self, app_spec: AppSpecification, lifespan: Callable[..., Any] = default_lifespan) -> None:
         app = FastAPI(
             lifespan=lifespan,
             title=app_spec.title,
