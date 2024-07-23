@@ -35,4 +35,4 @@ jobs:
 
       - name: Testing
         run: |
-          python -m pytest
+          python -m unittest

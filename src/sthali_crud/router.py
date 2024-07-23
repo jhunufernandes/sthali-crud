@@ -21,7 +21,7 @@ class Route:
         response_model (Any): The response model for the route.
         methods (list[str]): The HTTP methods supported by the route.
         status_code (int): The HTTP status code for the response. Default is 200.
-        dependencies (list): The dependencies for the route. Default is an empty list.
+        dependencies (list[type[Depends]]): The dependencies for the route. Default is None.
         name (str | None): The name of the route. Default is None.
     """
 
@@ -33,7 +33,7 @@ class Route:
         Field(description="The HTTP methods supported by the route"),
     ]
     status_code: Annotated[int, Field(default=200, description="The HTTP status code for the response")]
-    dependencies: Annotated[list, Field(default=[], description="The dependencies for the route")]
+    dependencies: Annotated[list, Field(default=None, description="The dependencies for the route")]
     name: Annotated[str | None, Field(description="The name of the route")] = None
 
 

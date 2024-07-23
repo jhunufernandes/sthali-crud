@@ -31,7 +31,7 @@ jobs:
 
       - name: Testing
         run: |
-          python -m pytest
+          python -m unittest
 
       - name: Build package
         run: |

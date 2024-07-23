@@ -37,6 +37,7 @@ class AppSpecification:
 
     Attributes:
         resources (List[ResourceSpecification]): The list of resource specifications.
+        dependencies (list[Depends]): The dependencies of the application. Default is None.
         description (str): The description of the application. Default value is "A FastAPI package for CRUD operations".
         summary (str | None): The summary of the application. Default value is None.
         title (str): The title of the application. Default value is "SthaliCRUD".
@@ -46,6 +47,7 @@ class AppSpecification:
     resources: Annotated[
         list[ResourceSpecification], Field(default_factory=list, description="The list of resource specifications")
     ]
+    dependencies: Annotated[list, Field(default=None, description="The dependencies for the application")]
     description: Annotated[
         str, Field(default="A FastAPI package for CRUD operations", description="The description of the application")
     ]
@@ -72,11 +74,12 @@ async def default_lifespan(app: FastAPI):
 class SthaliCRUD:
     def __init__(self, app_spec: AppSpecification, lifespan: Callable[..., Any] = default_lifespan) -> None:
         app = FastAPI(
-            lifespan=lifespan,
             title=app_spec.title,
-            summary=app_spec.summary,
             description=app_spec.description,
+            summary=app_spec.summary,
             version=app_spec.version,
+            dependencies=app_spec.dependencies,
+            lifespan=lifespan,
         )
         self.app = app
 
