@@ -1,9 +1,8 @@
 """{...}."""
-
 from collections.abc import Callable
 from contextlib import asynccontextmanager
 from logging import info
-from typing import Any, Annotated
+from typing import Annotated, Any
 
 from fastapi import FastAPI
 from pydantic import Field

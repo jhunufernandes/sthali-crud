@@ -1,3 +1,4 @@
+"""{...}."""
 from typing import Annotated
 from uuid import UUID, uuid4
 
@@ -7,7 +8,6 @@ from pydantic_core import ErrorDetails
 
 from sthali_db import DB, Models, PaginateParameters
 from sthali_db.models import Base, BaseWithId
-
 
 ResponseModel = BaseWithId
 
