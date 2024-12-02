@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
-from sthali_db import DB, DBSpecification, FieldDefinition, Models
+from sthali_db import DB, DBSpecification, FieldSpecification, Models
 
 from .config import load_and_parse_spec_file
 from .crud import CRUD
@@ -22,12 +22,12 @@ class ResourceSpecification:
     Attributes:
         db (DBSpecification): The database specification for the resource.
         name (str): The name of the resource.
-        fields (list[FieldDefinition]): The list of field definitions for the resource.
+        fields (list[FieldSpecification]): The list of field definitions for the resource.
     """
 
     db: Annotated[DBSpecification, Field(description="The database specification for the resource")]
     name: Annotated[str, Field(description="The name of the resource")]
-    fields: Annotated[list[FieldDefinition], Field(description="The list of field definitions for the resource")]
+    fields: Annotated[list[FieldSpecification], Field(description="The list of field definitions for the resource")]
 
 
 @dataclass

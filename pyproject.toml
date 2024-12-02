@@ -39,13 +39,17 @@ branch = true
 command_line = "-m unittest discover -v -s tests/"
 
 [tool.coverage.report]
-omit = ["tests/*", "sthali_db/*"]
+omit = [
+  "tests/*",
+  "sthali_db/*",
+]
 show_missing = true
 
 [tool.ruff]
 line-length = 119
 exclude = [
-  # "tests/",
+  "tests/*",
+  "sthali_db/*",
 ]
 
 [tool.ruff.lint]
