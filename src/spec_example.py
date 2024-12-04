@@ -1,4 +1,6 @@
-EXAMPLE_SPEC = {
+import typing
+
+EXAMPLE_SPEC: dict[str, list[dict[str, typing.Any]]] = {
     "resources": [
         {
             "db": {"engine": "Default", "path": ""},
