@@ -1,6 +1,7 @@
 """{...}."""
 import json
 import typing
+import pathib
 
 import yaml
 
@@ -43,7 +44,7 @@ def get_type(type_str: str) -> typing.Any:
 
 
 def load_and_parse_spec_file(spec_file_path: str) -> dict[str, typing.Any]:
-    spec_dict = load_spec_file(spec_file_path)
+    spec_dict = load_spec_file(pathlib.Path(spec_file_path))
 
     for resource in spec_dict["resources"]:
         for field in resource["fields"]:
@@ -59,8 +60,8 @@ def load_and_parse_spec_file(spec_file_path: str) -> dict[str, typing.Any]:
     return spec_dict
 
 
-def load_spec_file(spec_file_path: str) -> dict:
-    spec_file_extension = spec_file_path.split(".")[-1]
+def load_spec_file(spec_file_path: pathib.Path) -> dict[str, typing.Any]:
+    spec_file_extension = spec_file_path.suffix.strip(".")
     if spec_file_extension not in ("yaml", "yml", "json"):
         raise ConfigException("Invalid file extension")
 
