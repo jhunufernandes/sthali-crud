@@ -55,27 +55,33 @@ exclude = [
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-  "ANN002",  # missing-type-args
-  "ANN003",  # missing-type-kwargs
-  "ANN101",  # missing-type-self
-  "ANN102",  # missing-type-cls
   "ANN401",  # any-type
-  "COM812",  # missing-trailing-comma
-  "ISC001",  # single-line-implicit-string-concatenation
   "TID252",  # relative-imports
+  # "ANN002",  # missing-type-args
+  # "ANN003",  # missing-type-kwargs
+  # "ANN101",  # missing-type-self
+  # "ANN102",  # missing-type-cls
+  # "COM812",  # missing-trailing-comma
   # "D107",  # undocumented-public-init
+  # "ISC001",  # single-line-implicit-string-concatenation
 ]
 
 [tool.ruff.lint.per-file-ignores]
+"src/sthali_crud/config.py" = [
+  "UP007",  # non-pep604-annotation
+]
 "tests/*" = [
-  "ANN001",
-  "D100",
-  "D101",
-  "D102",
-  "PGH003",
-  "PT009",
-  "PT027",
-  "S101",
+  "COM812",  # missing-trailing-comma
+  "D100",  # undocumented-public-module
+  "D101",  # undocumented-public-class
+  "D102",  # undocumented-public-method
+  "D104",  # undocumented-public-package
+  "D106",  # undocumented-public-nested-class
+  "PGH003",  # blanket-type-ignore
+  "PIE804",  # unnecessary-dict-kwargs
+  "PT009",  # pytest-unittest-assertion
+  "PT027",  # pytest-unittest-raises-assertion
+  "S101",  # assert
 ]
 
 [tool.ruff.lint.pydocstyle]

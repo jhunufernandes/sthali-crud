@@ -9,7 +9,7 @@ import pydantic_core
 
 import sthali_db
 
-ResponseModel = sthali_db.models.BaseWithId
+ResponseModel = sthali_db.Models.BaseWithId
 
 
 class CRUDException(fastapi.HTTPException):
@@ -56,11 +56,11 @@ class CRUD:
             raise CRUDException(exception.errors()) from exception
         return response_result
 
-    async def create(self, resource: sthali_db.models.Base) -> ResponseModel:
+    async def create(self, resource: sthali_db.Models.Base) -> ResponseModel:
         """Create a new resource.
 
         Args:
-            resource (sthali_db.models.Base): The resource object to be created.
+            resource (sthali_db.Models.Base): The resource object to be created.
 
         Returns:
             ResponseModel: The response model containing the result of the operation.
@@ -84,14 +84,14 @@ class CRUD:
         return self._handle_result(result)
 
     async def update(
-        self, request: fastapi.Request, resource_id: uuid.UUID, resource: sthali_db.models.Base
+        self, request: fastapi.Request, resource_id: uuid.UUID, resource: sthali_db.Models.Base
     ) -> ResponseModel:
         """Update a resource in the database.
 
         Args:
             request (fastapi.Request): The FastAPI request object.
             resource_id (uuid.UUID): The ID of the resource to update.
-            resource (sthali_db.models.Base): The resource object containing the updated data.
+            resource (sthali_db.Models.Base): The resource object containing the updated data.
 
         Returns:
             ResponseModel: The response model containing the result of the update operation.

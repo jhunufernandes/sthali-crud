@@ -11,14 +11,14 @@ import pydantic
 
 import sthali_db
 
-from .config import load_and_parse_spec_file
+from .config import Config
 from .crud import CRUD
 from .router import Router
 
 __all__ = [
     "AppSpecification",
+    "Config",
     "SthaliCRUD",
-    "load_and_parse_spec_file",
 ]
 
 

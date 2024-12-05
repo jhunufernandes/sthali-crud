@@ -1,9 +1,12 @@
 """{...}."""
+
 import json
+import pathlib
 import typing
-import pathib
 
 import yaml
+
+import sthali_db
 
 
 class Types:
@@ -24,46 +27,62 @@ class ConfigException(Exception):
         super().__init__(*args)
 
 
-def get_type(type_str: str) -> typing.Any:
-    """Get the type based on the given type string.
+class Config:
+    """{...}.
 
-    Args:
-        type_str (str): The type string.
-
-    Returns:
-        typing.Any: The corresponding type.
-
-    Raises:
-        ConfigException: If the type string is invalid.
+    Atributes:
+        types (Types): The types attribute.
+        spec_file_path(pathlib.Path): The spec file path.
     """
-    type_str = type_str.strip().lower()
-    try:
-        return getattr(Types, type_str)
-    except AttributeError as exception:
-        raise ConfigException("Invalid type") from exception
 
+    types = sthali_db.Types()
 
-def load_and_parse_spec_file(spec_file_path: str) -> dict[str, typing.Any]:
-    spec_dict = load_spec_file(pathlib.Path(spec_file_path))
+    def __init__(self, spec_file_path: str) -> None:
+        self.spec_file_path = pathlib.Path(spec_file_path)
 
-    for resource in spec_dict["resources"]:
-        for field in resource["fields"]:
-            if isinstance(field["type"], str):
-                field["type"] = get_type(field["type"])
-            elif isinstance(field["type"], list):
-                types_list = tuple(get_type(type) for type in field["type"])
-                field["type"] = typing.Union[types_list]  # type: ignore
-            else:
-                raise ConfigException("Invalid field type")
-            if "has_default" in field:
-                field["has_default"] = get_type(field["has_default"])
-    return spec_dict
+    def _get_type(self, name: str) -> typing.Any:
+        """Get the type based on the given type string.
 
+        Args:
+            name (str): The type string.
 
-def load_spec_file(spec_file_path: pathib.Path) -> dict[str, typing.Any]:
-    spec_file_extension = spec_file_path.suffix.strip(".")
-    if spec_file_extension not in ("yaml", "yml", "json"):
-        raise ConfigException("Invalid file extension")
+        Returns:
+            typing.Any: The corresponding type.
 
-    with open(spec_file_path, "r", encoding="utf-8") as spec_file:
-        return json.load(spec_file) if spec_file_extension == "json" else yaml.safe_load(spec_file)
+        Raises:
+            ConfigException: If the type string is invalid.
+        """
+        name = name.strip().lower()
+        try:
+            return self.types.get(name)
+        except AttributeError as exception:
+            raise ConfigException("Invalid type") from exception
+
+    @property
+    def app_specification_file_content(self) -> dict[str, typing.Any]:
+        match self.spec_file_path.suffix:
+            case ".json":
+                fn = json.load
+            case ".yaml" | ".yml":
+                fn = yaml.safe_load
+            case _:
+                raise ConfigException("Invalid file extension")
+
+        with self.spec_file_path.open() as spec_file:
+            return fn(spec_file)
+
+    @property
+    def app_specification(self) -> dict[str, typing.Any]:
+        _app_specification = self.app_specification_file_content
+        for resource in _app_specification["resources"]:
+            for field in resource["fields"]:
+                if isinstance(field["type"], str):
+                    field["type"] = self._get_type(field["type"])
+                elif isinstance(field["type"], list):
+                    types_list = tuple(self._get_type(t) for t in field["type"])
+                    field["type"] = typing.Union[types_list]
+                else:
+                    raise ConfigException("Invalid field type")
+                if "has_default" in field:
+                    field["has_default"] = self._get_type(field["has_default"])
+        return _app_specification
