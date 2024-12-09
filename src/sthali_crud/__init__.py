@@ -19,6 +19,7 @@ __all__ = [
     "AppSpecification",
     "Config",
     "SthaliCRUD",
+    "default_lifespan",
 ]
 
 
@@ -48,7 +49,7 @@ class AppSpecification:
 
     Attributes:
         resources (List[ResourceSpecification]): The list of resource specifications.
-        dependencies (list[type[fastapi.params.Depends]]): The dependencies of the application. Default is None.
+        dependencies (list[typing.Any]): The dependencies of the application. Default is None.
         description (str): The description of the application. Default value is "A FastAPI package for CRUD
             operations".
         summary (str | None): The summary of the application. Default value is None.
@@ -61,7 +62,7 @@ class AppSpecification:
         pydantic.Field(default_factory=list, description="The list of resource specifications"),
     ]
     dependencies: typing.Annotated[
-        list[type[fastapi.params.Depends]],
+        list[typing.Any],
         pydantic.Field(default=None, description="The dependencies for the application"),
     ]
     description: typing.Annotated[
@@ -77,7 +78,7 @@ class AppSpecification:
 
 @contextlib.asynccontextmanager
 async def default_lifespan(app: fastapi.FastAPI) -> typing.AsyncGenerator[None, None]:
-    """A context manager that handles the startup and shutdown of SthaliCRUD.
+    """A context manager that handles the startup and shutdown of Sthali application.
 
     Args:
         app (fastapi.FastAPI): The FastAPI application instance.
@@ -95,6 +96,12 @@ class SthaliCRUD:
 
     Attributes:
         app (fastapi.FastAPI): The FastAPI application instance.
+
+    Args:
+        app_spec (AppSpecification): The specification of the application, including title, description, summary,
+            version, dependencies, and resources.
+        lifespan (collections.abc.Callable[..., typing.Any]): The lifespan of the application.
+            Defaults to default_lifespan.
     """
 
     def __init__(

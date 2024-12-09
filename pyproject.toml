@@ -1,6 +1,8 @@
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = ["setuptools>=61.0"]
+requires = [
+  "setuptools >= 61.0",
+]
 
 [project]
 name = "sthali-crud"
@@ -8,11 +10,23 @@ version = "0.0.3.6"
 authors = [{ name = "Jhunu Fernandes", email = "jhunu.fernandes@gmail.com" }]
 description = "A FastAPI package for CRUD operations"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">= 3.10"
 classifiers = [
-  "Programming Language :: Python :: 3.10",
+  "Framework :: FastAPI",
+  "Framework :: Pydantic",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Internet",
+  "Topic :: Software Development :: Libraries :: Application Frameworks",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development",
+  "Typing :: Typed",
 ]
 dependencies = [
   "fastapi >= 0.111.1",
@@ -23,12 +37,19 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+  "coverage[toml] >= 7.6.1",
   "ruff >= 0.5.2",
-  "coverage",
-  "httpx",
+  "uvicorn",
+  # "httpx",
 ]
-tests = ["coverage", "httpx"]
-stage = ["build", "coverage", "uvicorn"]
+tests = [
+  "coverage[toml] >= 7.6.1",
+  # "httpx",
+]
+stage = [
+  "build >= 1.2.1",
+  "coverage[toml] >= 7.6.1",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/jhunufernandes/sthali-crud"
@@ -36,53 +57,50 @@ stage = ["build", "coverage", "uvicorn"]
 
 [tool.coverage.run]
 branch = true
-command_line = "-m unittest discover -v -s tests/"
+command_line = "-m unittest discover -v"
 
 [tool.coverage.report]
 omit = [
   "tests/*",
-  "sthali_db/*",
 ]
 show_missing = true
-
+exclude_lines = [
+    "def _",
+]
 [tool.ruff]
 line-length = 119
-exclude = [
-  "tests/*",
-  "sthali_db/*",
-]
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = [
-  "ANN401",  # any-type
-  "TID252",  # relative-imports
-  # "ANN002",  # missing-type-args
-  # "ANN003",  # missing-type-kwargs
-  # "ANN101",  # missing-type-self
-  # "ANN102",  # missing-type-cls
-  # "COM812",  # missing-trailing-comma
-  # "D107",  # undocumented-public-init
-  # "ISC001",  # single-line-implicit-string-concatenation
-]
+# ignore = [
+#   "ANN401",  # any-type
+#   "TID252",  # relative-imports
+#   # "ANN002",  # missing-type-args
+#   # "ANN003",  # missing-type-kwargs
+#   # "ANN101",  # missing-type-self
+#   # "ANN102",  # missing-type-cls
+#   # "COM812",  # missing-trailing-comma
+#   # "D107",  # undocumented-public-init
+#   # "ISC001",  # single-line-implicit-string-concatenation
+# ]
 
-[tool.ruff.lint.per-file-ignores]
-"src/sthali_crud/config.py" = [
-  "UP007",  # non-pep604-annotation
-]
-"tests/*" = [
-  "COM812",  # missing-trailing-comma
-  "D100",  # undocumented-public-module
-  "D101",  # undocumented-public-class
-  "D102",  # undocumented-public-method
-  "D104",  # undocumented-public-package
-  "D106",  # undocumented-public-nested-class
-  "PGH003",  # blanket-type-ignore
-  "PIE804",  # unnecessary-dict-kwargs
-  "PT009",  # pytest-unittest-assertion
-  "PT027",  # pytest-unittest-raises-assertion
-  "S101",  # assert
-]
+# [tool.ruff.lint.per-file-ignores]
+# "src/sthali_crud/config.py" = [
+#   "UP007",  # non-pep604-annotation
+# ]
+# "tests/*" = [
+#   "COM812",  # missing-trailing-comma
+#   "D100",  # undocumented-public-module
+#   "D101",  # undocumented-public-class
+#   "D102",  # undocumented-public-method
+#   "D104",  # undocumented-public-package
+#   "D106",  # undocumented-public-nested-class
+#   "PGH003",  # blanket-type-ignore
+#   "PIE804",  # unnecessary-dict-kwargs
+#   "PT009",  # pytest-unittest-assertion
+#   "PT027",  # pytest-unittest-raises-assertion
+#   "S101",  # assert
+# ]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
