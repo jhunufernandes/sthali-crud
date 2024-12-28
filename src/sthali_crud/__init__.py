@@ -34,7 +34,7 @@ class ResourceSpecification:
     """
 
     db: typing.Annotated[
-        sthali_db.DBSpecification, pydantic.Field(description="The database specification for the resource")
+        sthali_db.DBSpecification, pydantic.Field(description="The database specification for the resource"),
     ]
     name: typing.Annotated[str, pydantic.Field(description="The name of the resource")]
     fields: typing.Annotated[
@@ -59,11 +59,11 @@ class AppSpecification:
 
     resources: typing.Annotated[
         list[ResourceSpecification],
-        pydantic.Field(default_factory=list, description="The list of resource specifications"),
+        pydantic.Field(default=None, description="The list of resource specifications"),
     ]
     dependencies: typing.Annotated[
         list[typing.Any],
-        pydantic.Field(default=None, description="The dependencies for the application"),
+        pydantic.Field(default=None, description="The dependencies of the application"),
     ]
     description: typing.Annotated[
         str,
@@ -74,6 +74,16 @@ class AppSpecification:
     summary: typing.Annotated[str | None, pydantic.Field(default=None, description="The summary of the application")]
     title: typing.Annotated[str, pydantic.Field(default="SthaliCRUD", description="The title of the application")]
     version: typing.Annotated[str, pydantic.Field(default="0.1.0", description="The version of the application")]
+
+    def add_dependency(self, dependency: typing.Any) -> None:
+        """Adds a dependency to the application.
+
+        Args:
+            dependency (typing.Any): The dependency to add to the application.
+        """
+        dependencies = self.dependencies or []
+        dependencies.append(dependency)
+        self.dependencies = dependencies
 
 
 @contextlib.asynccontextmanager
@@ -120,7 +130,7 @@ class SthaliCRUD:
             description=app_spec.description,
             summary=app_spec.summary,
             version=app_spec.version,
-            dependencies=app_spec.dependencies,  # type: ignore
+            dependencies=app_spec.dependencies,
             lifespan=lifespan,
         )
         self.app = app
