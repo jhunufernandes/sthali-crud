@@ -1,0 +1,28 @@
+name: tests
+on:
+  push:
+    branches:
+      - main
+      - development
+  pull_request:
+    branches:
+      - main
+jobs:
+  install-deps:
+    uses: project-sthali/sthali-core/.github/workflows/deps.yml@main
+    with:
+      pip_args: tests
+  run-tests:
+    needs:
+      - install-deps
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: python-deps-tests
+          path: .
+      - run: |
+          unzip venv.zip
+      - run: |
+          .venv/bin/python -m unittest discover -v
