@@ -12,8 +12,12 @@ dist
 # Cache directories
 *_cache
 
-# Volumes
-volume
+# Docs static files
+docs/site
 
 # Symbolic links
+sthali_core
 sthali_db
+
+# Volumes
+volume
