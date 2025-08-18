@@ -44,7 +44,7 @@
 #### Runtime Dependencies
 This project requires the following Python packages with specific versions:
 
-- `sthali-core >= 0.0.8`
+- `sthali-db >= 0.0.2`
 
 
 
