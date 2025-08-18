@@ -1,5 +1,6 @@
 # Environments
 .venv
+venv
 
 # Byte-compiled / optimized / DLL files
 __pycache__
@@ -11,11 +12,12 @@ dist
 # Cache directories
 *_cache
 
-# Volumes
-volume/tinydb.json
+# Docs static files
+docs/site
 
-# Editor files
-.vscode
-
-# Local libs
+# Symbolic links
+sthali_core
 sthali_db
+
+# Volumes
+volume
