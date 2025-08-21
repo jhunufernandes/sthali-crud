@@ -4,9 +4,8 @@ import json
 import pathlib
 import typing
 
-import yaml
-
 import sthali_db
+import yaml
 
 
 class Types:
