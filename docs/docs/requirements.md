@@ -10,7 +10,7 @@
 #### Runtime Dependencies
 This project requires the following Python packages with specific versions:
 
-- `sthali-db >= 0.0.2`
+- `sthali-db >= 0.0.3`
 
 
 
