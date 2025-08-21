@@ -6,7 +6,7 @@ requires = [
 
 [project]
 name = "sthali-crud"
-version = "0.0.3"
+version = "0.0.7"
 authors = [
   { name = "Jhunu Fernandes", email = "jhunu.fernandes@gmail.com" },
 ]
@@ -30,7 +30,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "sthali-db >= 0.0.2",
+  "sthali-db >= 0.0.3",
 ]
 
 [project.urls]
@@ -60,35 +60,26 @@ line-length = 119
 select = [
   "ALL",
 ]
-# ignore = [
-#   "ANN401",  # any-type
-#   "TID252",  # relative-imports
-#   # "ANN002",  # missing-type-args
-#   # "ANN003",  # missing-type-kwargs
-#   # "ANN101",  # missing-type-self
-#   # "ANN102",  # missing-type-cls
-#   # "COM812",  # missing-trailing-comma
-#   # "D107",  # undocumented-public-init
-#   # "ISC001",  # single-line-implicit-string-concatenation
-# ]
+ignore = [
+  "ANN401",  # any-type
+  "TID252",  # relative-imports
+]
 
-# [tool.ruff.lint.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 # "src/sthali_crud/config.py" = [
 #   "UP007",  # non-pep604-annotation
 # ]
-# "tests/*" = [
-#   "COM812",  # missing-trailing-comma
-#   "D100",  # undocumented-public-module
-#   "D101",  # undocumented-public-class
-#   "D102",  # undocumented-public-method
-#   "D104",  # undocumented-public-package
-#   "D106",  # undocumented-public-nested-class
-#   "PGH003",  # blanket-type-ignore
-#   "PIE804",  # unnecessary-dict-kwargs
-#   "PT009",  # pytest-unittest-assertion
-#   "PT027",  # pytest-unittest-raises-assertion
-#   "S101",  # assert
-# ]
+"tests/*" = [
+  "COM812",  # missing-trailing-comma
+  "D100",  # undocumented-public-module
+  "D101",  # undocumented-public-class
+  "D102",  # undocumented-public-method
+  "D104",  # undocumented-public-package
+  "D106",  # undocumented-public-nested-class
+  "PIE804",  # unnecessary-dict-kwargs
+  "PT009",  # pytest-unittest-assertion
+  "PT027",  # pytest-unittest-raises-assertion
+]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

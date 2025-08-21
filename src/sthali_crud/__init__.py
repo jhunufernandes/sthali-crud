@@ -6,9 +6,7 @@ import logging
 import typing
 
 import fastapi
-import fastapi.params
 import pydantic
-
 import sthali_db
 
 from .config import Config
@@ -34,7 +32,8 @@ class ResourceSpecification:
     """
 
     db: typing.Annotated[
-        sthali_db.DBSpecification, pydantic.Field(description="The database specification for the resource"),
+        sthali_db.DBSpecification,
+        pydantic.Field(description="The database specification for the resource"),
     ]
     name: typing.Annotated[str, pydantic.Field(description="The name of the resource")]
     fields: typing.Annotated[
@@ -68,7 +67,7 @@ class AppSpecification:
     description: typing.Annotated[
         str,
         pydantic.Field(
-            default="A FastAPI package for CRUD operations", description="The description of the application"
+            default="A FastAPI package for CRUD operations", description="The description of the application",
         ),
     ]
     summary: typing.Annotated[str | None, pydantic.Field(default=None, description="The summary of the application")]
@@ -115,7 +114,7 @@ class SthaliCRUD:
     """
 
     def __init__(
-        self, app_spec: AppSpecification, lifespan: collections.abc.Callable[..., typing.Any] = default_lifespan
+        self, app_spec: AppSpecification, lifespan: collections.abc.Callable[..., typing.Any] = default_lifespan,
     ) -> None:
         """Initializes the SthaliCRUD instance.
 

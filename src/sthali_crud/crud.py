@@ -8,6 +8,7 @@ import pydantic
 import pydantic_core
 
 import sthali_db
+import sthali_db.clients
 
 ResponseModel = sthali_db.Models.BaseWithId
 
@@ -30,15 +31,17 @@ class CRUD:
     def response_model(self) -> type[ResponseModel]:
         return self.models.response_model
 
-    def _handle_list(self, result: list[dict[str, typing.Any] | None]) -> list[ResponseModel]:
+    def _handle_list(self, result: list[sthali_db.clients.ResourceObj]) -> list[ResponseModel]:
         errors: list[CRUDException] = []
         response_result: list[ResponseModel] = []
 
         for r in result:
             try:
-                response_result.append(self._handle_result(r))
+                _r = self._handle_result(r)
             except CRUDException as exception:
                 errors.append(exception)
+            else:
+                response_result.append(_r)
 
         try:
             assert not errors
@@ -123,7 +126,7 @@ class CRUD:
     async def read_many(
         self,
         paginate_parameters: typing.Annotated[
-            dict[str, typing.Any], fastapi.Depends(sthali_db.dependencies.PaginateParameters)
+            sthali_db.dependencies.PaginateParameters, fastapi.Depends(sthali_db.dependencies.PaginateParameters),
         ],
     ) -> list[ResponseModel]:
         """Retrieves multiple records from the database based on pagination parameters.

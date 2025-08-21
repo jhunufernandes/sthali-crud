@@ -3,6 +3,7 @@
 import os
 
 import uvicorn
+
 from sthali_crud import AppSpecification, Config, SthaliCRUD
 
 app_specification_file_path = os.getenv("APP_SPECIFICATION_FILE_PATH") or "volume/app_specification_sample.json"
