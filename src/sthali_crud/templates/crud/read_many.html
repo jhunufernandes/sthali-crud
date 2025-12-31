@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<ul class="nav nav-pills">
+    <li class="nav-item">
+        <a class="nav-link active" href="{{ url_for('view_create') }}">new</a>
+    </li>
+</ul>
+
+<table class="table table-striped">
+    <thead>
+        <tr class="table-primary">
+            {% for k in model_fields.keys() %}
+            <th scope="col">{{ k }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in resources %}
+        <tr>
+            {% for k in model_fields.keys() %}
+            <td>
+                {% if k == "id" %}
+                <a href="{{ url_for('view_read', resource_id=r[k]) }}">{{ r[k] }}</a>
+                {% else %}
+                {{ r[k] }}
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -6,7 +6,7 @@ requires = [
 
 [project]
 name = "sthali-crud"
-version = "0.0.7"
+version = "0.0.8"
 authors = [
   { name = "Jhunu Fernandes", email = "jhunu.fernandes@gmail.com" },
 ]
@@ -30,7 +30,15 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "sthali-db >= 0.0.3",
+  "alembic",
+  "fastapi",
+  "greenlet",
+  "sqlalchemy",
+  "uvicorn",
+  "jinja2",
+  "pyyaml",
+  "python-dotenv",
+  "aiosqlite",
 ]
 
 [project.urls]
@@ -62,13 +70,19 @@ select = [
 ]
 ignore = [
   "ANN401",  # any-type
+  "ANN003",  # missing-type-kwargs
+  "ANN002",  # missing-type-args
   "TID252",  # relative-imports
 ]
 
 [tool.ruff.lint.per-file-ignores]
-# "src/sthali_crud/config.py" = [
-#   "UP007",  # non-pep604-annotation
-# ]
+"src/sthali_crud/routers/api.py" = [
+  "D417",  # undocumented-param
+]
+"src/sthali_crud/routers/views.py" = [
+  "D417",  # undocumented-param
+]
+
 "tests/*" = [
   "COM812",  # missing-trailing-comma
   "D100",  # undocumented-public-module

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form id="resourceForm">
+    {% for k, v in form_fields.items() %}
+    <div class="mb-3">
+        <label for="{{ k }}" class="form-label">{{ k }}</label>
+        <input type="{{ v.type }}" class="form-control bg-dark text-bg-dark" id="{{ k }}" value="{{ resource[k] }}" {{ v.disabled }}>
+    </div>
+    {% endfor %}
+    <button type="submit" id="submitBtn" class="btn btn-primary">Update</button>
+</form>
+
+<script>
+    document.getElementById("submitBtn").addEventListener("click", async () => {
+        const form = document.getElementById("resourceForm");
+        const data = Object.fromEntries(new FormData(form));
+        const res = await fetch("{{ submit_url }}", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (res.status === 201) window.location.href = "/{{ callback }}";
+        else console.error(await res.text());
+    });
+</script>
+{% endblock %}

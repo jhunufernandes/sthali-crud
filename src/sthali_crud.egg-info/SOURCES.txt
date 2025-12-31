@@ -1,0 +1,17 @@
+pyproject.toml
+src/bkp/__init__.py
+src/bkp/config.py
+src/bkp/crud.py
+src/bkp/router.py
+src/sthali_crud/__init__.py
+src/sthali_crud/config.py
+src/sthali_crud/db.py
+src/sthali_crud/models.py
+src/sthali_crud/schemas.py
+src/sthali_crud/templates.py
+src/sthali_crud/views.py
+src/sthali_crud.egg-info/PKG-INFO
+src/sthali_crud.egg-info/SOURCES.txt
+src/sthali_crud.egg-info/dependency_links.txt
+src/sthali_crud.egg-info/requires.txt
+src/sthali_crud.egg-info/top_level.txt
