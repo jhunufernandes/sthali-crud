@@ -7,10 +7,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.applications import Lifespan
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import text
 
 from .crud import CRUD
-from .database.engine import async_session_maker
+from .database.engine import async_session_maker, test_db
 from .database.models import BaseModel
 from .database.schemas import BaseSchema
 
@@ -27,15 +26,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     Yields:
         None
     """
-    # Test DB connection at startup
     try:
-        async with async_session_maker() as session:
-            result = await session.execute(text("SELECT 1"))
-            if result.scalar() != 1:
-                raise RuntimeError("Database test query failed")
+        await test_db(async_session_maker)
         logger.info("Database connection successful")
-    except Exception as e:
-        logger.error(f"Database connection failed: {e}")
+    except RuntimeError as e:
+        message = f"Database connection failed: {e}"
+        logger.exception(message)
         raise
 
     yield

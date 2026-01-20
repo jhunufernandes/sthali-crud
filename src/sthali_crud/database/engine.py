@@ -8,6 +8,7 @@ from collections.abc import AsyncGenerator
 from typing import Annotated
 
 from fastapi import Depends
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from ..config import config
@@ -24,6 +25,14 @@ async_session_maker = async_sessionmaker(
     expire_on_commit=False,
     class_=AsyncSession,
 )
+
+
+async def test_db(async_session_maker) -> None:
+        async with async_session_maker() as session:
+            result = await session.execute(text("SELECT 1"))
+            if result.scalar() != 1:
+                message = "Database test query failed"
+                raise RuntimeError(message)
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
