@@ -1,4 +1,8 @@
-"""{...}."""
+"""Database engine and session management.
+
+This module provides the SQLAlchemy async engine, session factory,
+and FastAPI dependency for database connections.
+"""
 
 from collections.abc import AsyncGenerator
 from typing import Annotated
@@ -11,11 +15,11 @@ from ..config import config
 engine = create_async_engine(
     config.database_uri,
     echo=True,
-    connect_args={"check_same_thread": False},
+    pool_pre_ping=True,
 )
 
 
-async_session = async_sessionmaker(
+async_session_maker = async_sessionmaker(
     engine,
     expire_on_commit=False,
     class_=AsyncSession,
@@ -23,9 +27,20 @@ async_session = async_sessionmaker(
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    """{...}."""
-    async with async_session() as session:
-        yield session
+    """Provide an asynchronous database session.
+
+    This function serves as a FastAPI dependency that creates and manages
+    database sessions. It ensures proper cleanup after each request.
+
+    Returns:
+        AsyncSession: An active database session.
+
+    """
+    async with async_session_maker() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
 
 
 DbSession = Annotated[AsyncSession, Depends(get_db)]

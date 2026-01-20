@@ -115,21 +115,21 @@ class API(Base):
         router.add_api_route(
             "/",
             replace_type_hint(self.api_create, "resource", self.create_schema),
-            response_model=self.schema,
+            response_model=self.read_schema,
             methods=["POST"],
             status_code=201,
         )
-        router.add_api_route("/{resource_id}/", self.api_read, response_model=self.schema, methods=["GET"])
+        router.add_api_route("/{resource_id}/", self.api_read, response_model=self.read_schema, methods=["GET"])
         router.add_api_route(
             "/{resource_id}/",
             replace_type_hint(self.api_update, "resource", self.update_schema),
-            response_model=self.schema,
+            response_model=self.read_schema,
             methods=["PUT"],
         )
         router.add_api_route(
             "/{resource_id}/",
             replace_type_hint(self.api_update, "resource", self.update_schema),
-            response_model=self.schema,
+            response_model=self.read_schema,
             methods=["PATCH"],
         )
         router.add_api_route(
@@ -139,5 +139,5 @@ class API(Base):
             methods=["DELETE"],
             status_code=204,
         )
-        router.add_api_route("/", self.api_read_many, response_model=list[self.schema], methods=["GET"])  # type: ignore
+        router.add_api_route("/", self.api_read_many, response_model=list[self.read_schema], methods=["GET"])  # type: ignore
         return router

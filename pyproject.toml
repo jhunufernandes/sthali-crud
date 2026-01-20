@@ -30,23 +30,21 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "alembic",
+  "aiosqlite",
   "fastapi",
   "greenlet",
+  "jinja2",
+  "python-dotenv",
   "sqlalchemy",
   "uvicorn",
-  "jinja2",
-  "pyyaml",
-  "python-dotenv",
-  "aiosqlite",
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/project-sthali/sthali-crud"
-"Bug Tracker" = "https://github.com/project-sthali/sthali-crud/issues"
-"Source" = "https://github.com/project-sthali/sthali-crud"
-"Documentation" = "https://project-sthali.github.io/sthali-crud"
-"Changelog" = "https://github.com/project-sthali/sthali-crud/releases"
+"Homepage" = "https://github.com/jhunufernandes/sthali-crud"
+"Bug Tracker" = "https://github.com/jhunufernandes/sthali-crud/issues"
+"Source" = "https://github.com/jhunufernandes/sthali-crud"
+"Documentation" = "https://jhunufernandes.github.io/sthali-crud"
+"Changelog" = "https://github.com/jhunufernandes/sthali-crud/releases"
 
 [project.optional-dependencies]
 dev = [

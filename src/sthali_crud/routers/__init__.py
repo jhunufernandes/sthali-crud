@@ -52,23 +52,23 @@ class Base:
     def __init__(
         self,
         model: ModelType,
-        schema: type[SchemaType],
+        read_schema: type[SchemaType],
         create_schema: type[SchemaType] | None = None,
         update_schema: type[SchemaType] | None = None,
         templates: Jinja2Templates | None = None,
     ) -> None:
         """{...}."""
         self.model = model
-        self.schema = schema
-        self.create_schema = create_schema or schema
-        self.update_schema = update_schema or schema
+        self.read_schema = read_schema
+        self.create_schema = create_schema or read_schema
+        self.update_schema = update_schema or read_schema
         self.templates = templates
 
     def _handle_result(self, result: ModelType | None) -> SchemaType:
-        return handle_result(self.schema, result)  # type: ignore
+        return handle_result(self.read_schema, result)  # type: ignore
 
     def _handle_list_result(self, result: list[ModelType]) -> list[SchemaType]:
-        return handle_list_result(self.schema, result)  # type: ignore
+        return handle_list_result(self.read_schema, result)  # type: ignore
 
     @property
     def resource_name(self) -> str:
