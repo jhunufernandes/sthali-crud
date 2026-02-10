@@ -1,76 +1,60 @@
 """{...}."""
 
-from collections.abc import Callable
-from typing import Any
-
-from fastapi import HTTPException, status
-from fastapi.templating import Jinja2Templates
+from fastapi import APIRouter, HTTPException, status
 from pydantic import ValidationError
 
 from ..database import ModelType, SchemaType
 
 
-def replace_type_hint(
-    original_func: Callable[..., Any],
-    type_name: str,
-    new_type: type,
-) -> Callable[..., Any]:
-    """{...}."""
-    if original_func.__annotations__ and type_name in original_func.__annotations__:
-        original_func.__annotations__[type_name] = new_type
-    return original_func
-
-
-def handle_result(schema: type[SchemaType], model: ModelType | None) -> SchemaType:
-    """{...}."""
-    if not model:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Record not found")
-    try:
-        return schema.model_validate(model)
-    except ValidationError as e:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, e.errors()) from e
-
-
-def handle_list_result(schema: type[SchemaType], result: list[ModelType]) -> list[SchemaType]:
-    """{...}."""
-    errors: list[HTTPException] = []
-    response_result: list[SchemaType] = []
-
-    for r in result:
-        try:
-            response_result.append(handle_result(schema, r))
-        except HTTPException as e:
-            errors.append(e)
-    if errors:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, [e.detail for e in errors])
-    return response_result
-
-
 class Base:
     """{...}."""
 
+    prefix: str | None = None
+
     def __init__(
         self,
+        get_db,
         model: ModelType,
-        read_schema: type[SchemaType],
-        create_schema: type[SchemaType] | None = None,
-        update_schema: type[SchemaType] | None = None,
-        templates: Jinja2Templates | None = None,
+        create_schema: SchemaType,
+        read_schema: SchemaType,
+        update_schema: SchemaType,
     ) -> None:
-        """{...}."""
+        """{…}."""
+        self.get_db = get_db
         self.model = model
         self.read_schema = read_schema
-        self.create_schema = create_schema or read_schema
-        self.update_schema = update_schema or read_schema
-        self.templates = templates
+        self.create_schema = create_schema
+        self.update_schema = update_schema
 
-    def _handle_result(self, result: ModelType | None) -> SchemaType:
-        return handle_result(self.read_schema, result)  # type: ignore
-
-    def _handle_list_result(self, result: list[ModelType]) -> list[SchemaType]:
-        return handle_list_result(self.read_schema, result)  # type: ignore
+    @property
+    def api_router(self) -> APIRouter:
+        raise NotImplementedError
 
     @property
     def resource_name(self) -> str:
         """{...}."""
         return self.model.__tablename__
+
+    def handle_result(self, result: ModelType | None) -> SchemaType:
+        """{...}."""
+        if not result:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "Resource not found")
+        try:
+            schema: SchemaType = self.read_schema  # type: ignore
+            return schema.model_validate(result)
+        except ValidationError as e:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, e.errors()) from e
+
+    def handle_list_result(self, result: list[ModelType]) -> list[SchemaType]:
+        """{...}."""
+        errors: list[HTTPException] = []
+        response_result: list[SchemaType] = []
+
+        for r in result:
+            try:
+                response_result.append(self.handle_result(r))
+            except HTTPException as e:
+                errors.append(e)
+        if errors:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, [e.detail for e in errors])
+        return response_result

@@ -1,30 +1,39 @@
 """{...}."""
 
-from os import getenv
+from typing import Any
 
-from dotenv import load_dotenv
+from fastapi import Request
+from sthali_core.config import Config as BaseConfig
+from sthali_core.config import ConfigSchema as BaseConfigSchema
 
-load_dotenv()
+
+def get_app_context(request: Request) -> dict[str, Any]:
+    # yaml_config = config.yaml_config
+    crudmodels = request.app.extra.get("crudmodels", [])
+    return {
+        "title": "Sthali",
+        "crudmodels": crudmodels,
+    }
 
 
-class Config:
+def get_context_processors(request: Request) -> dict[str, Any]:
+    return {
+        "request": request,
+        **get_app_context(request),
+    }
+
+
+class ConfigSchema(BaseConfigSchema):
+    database_uri: str
+
+
+class Config(BaseConfig):
     """{...}."""
+    config_schema = ConfigSchema
 
-    def __init__(self) -> None:
+    def __init__(self, config_file_path: str) -> None:
         """{...}."""
-        database_uri = getenv("DATABASE_URI")
-
-        if not isinstance(database_uri, str):
-            msg = "DATABASE_URI environment variable is not set"
-            raise TypeError(msg)
-
-        self.database_uri = database_uri
-
-    # def get_api_router_permissions(self, router_name: str) -> bool:
-    #     return bool(getenv(f"API_{router_name.upper()}"))
-
-    # def get_views_router_permissions(self, router_name: str) -> bool:
-    #     return bool(getenv(f"API_{router_name.upper()}"))
+        super().__init__(config_file_path)
 
 
-config = Config()
+config = Config.load()

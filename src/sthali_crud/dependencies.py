@@ -1,23 +1,27 @@
 """{...}."""
 
-import typing
+from typing import Annotated
 
-import pydantic
+from fastapi import Depends
+from pydantic import BaseModel, Field, NonNegativeInt
 
 
-class PaginateParameters(pydantic.BaseModel):
+class PaginateParameters(BaseModel):
     """Represents the parameters for retrieving items.
 
     Attributes:
-        skip (pydantic.NonNegativeInt): The number of items to skip. Defaults to 0.
-        limit (pydantic.NonNegativeInt): The maximum number of items to return. Defaults to 100.
+        skip (NonNegativeInt): The number of items to skip. Defaults to 0.
+        limit (NonNegativeInt): The maximum number of items to return. Defaults to 100.
     """
 
-    skip: typing.Annotated[
-        pydantic.NonNegativeInt,
-        pydantic.Field(default=0, description="The number of items to skip"),
+    skip: Annotated[
+        NonNegativeInt,
+        Field(default=0, description="The number of items to skip"),
     ]
-    limit: typing.Annotated[
-        pydantic.NonNegativeInt,
-        pydantic.Field(default=100, description="The maximum number of items to return"),
+    limit: Annotated[
+        NonNegativeInt,
+        Field(default=100, description="The maximum number of items to return"),
     ]
+
+
+paginate_parameters = Annotated[PaginateParameters | None, Depends(PaginateParameters)]

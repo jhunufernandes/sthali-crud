@@ -7,11 +7,5 @@ src/sthali_crud.egg-info/SOURCES.txt
 src/sthali_crud.egg-info/dependency_links.txt
 src/sthali_crud.egg-info/requires.txt
 src/sthali_crud.egg-info/top_level.txt
-src/sthali_crud/database/__init__.py
-src/sthali_crud/database/engine.py
-src/sthali_crud/database/models.py
-src/sthali_crud/database/schemas.py
 src/sthali_crud/routers/__init__.py
 src/sthali_crud/routers/api.py
-src/sthali_crud/routers/views.py
-src/sthali_crud/templates/__init__.py

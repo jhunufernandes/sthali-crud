@@ -30,13 +30,8 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "aiosqlite",
-  "fastapi",
-  "greenlet",
-  "jinja2",
-  "python-dotenv",
-  "sqlalchemy",
-  "uvicorn",
+  "sthali-core @ file:../sthali-core/",
+  "sthali-db @ file:../sthali-db/",
 ]
 
 [project.urls]

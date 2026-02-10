@@ -1,19 +1,25 @@
 """{...}."""
 
-import logging
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Sequence
 from contextlib import asynccontextmanager
+from logging import getLogger
 
 from fastapi import FastAPI
-from fastapi.applications import Lifespan
-from fastapi.staticfiles import StaticFiles
 
-from .crud import CRUD
-from .database.engine import async_session_maker, test_db
-from .database.models import BaseModel
-from .database.schemas import BaseSchema
+from .config import config
+from .database import Engine, ModelType, SchemaType
+from .routers import Base as BaseRouter
+from .routers.api import API
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "CRUDSchemas",
+    "CRUDTemplates",
+    "SthaliCRUD",
+]
+
+engine = Engine.load_from_config(config.yaml_config["database_uri"])
+logger = getLogger(__name__)
+
 
 
 @asynccontextmanager
@@ -27,7 +33,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         None
     """
     try:
-        await test_db(async_session_maker)
+        await engine.test_db()
         logger.info("Database connection successful")
     except RuntimeError as e:
         message = f"Database connection failed: {e}"
@@ -42,31 +48,47 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 class SthaliCRUD:
     """FastAPI application for Sthali CRUD operations."""
-
     def __init__(
         self,
-        lifespan: Lifespan,
-        static: StaticFiles,
-        model: type[BaseModel],
-        create_schema: type[BaseSchema],
-        read_schema: type[BaseSchema],
-        update_schema: type[BaseSchema],
-        create_template: str,
-        read_template: str,
-        read_many_template: str,
+        definitions: Sequence[tuple[ModelType, tuple[SchemaType, SchemaType, SchemaType]]],
+        extended_routers: list[type[BaseRouter]] | None = None,
     ) -> None:
         """Initialize the Sthali CRUD FastAPI application."""
+        self.engine = Engine.load_from_config(config.yaml_config["database_uri"])
+        self.get_db = engine.get_db
+
         app = FastAPI(lifespan=lifespan)
-        # app.mount("/static", StaticFiles(directory=str(Path(__file__).parent / "static")), name="static")
-        app.mount("/static", static, name="static")
-        crud = CRUD(
-            model,
-            read_schema,
-            create_schema,
-            update_schema,
-            create_template,
-            read_template,
-            read_many_template,
-        )
-        app.include_router(crud.api.api_router, prefix="/api/v1")
-        app.include_router(crud.views.api_router, prefix="/views")
+        self.app = app
+        self.definitions = definitions
+
+        self.app.extra["crudmodels"] = {}
+        for model, schemas in definitions or []:
+            api = self.register_api_router(model, schemas, API)
+            self._extend_crudmodels(api)
+
+            for router in extended_routers or []:
+                self.register_api_router(model, schemas, router, api=api)
+
+    def _extend_crudmodels(self, api: BaseRouter) -> None:
+        resource_name = api.resource_name
+        model_json_schema = api.read_schema.model_json_schema()
+        self.app.extra["crudmodels"][resource_name] = {
+            "table": resource_name,
+            "title": model_json_schema.get("title", resource_name),
+            "view_read_many": f"/views/{resource_name}",
+        }
+
+    def register_api_router(
+        self,
+        model: ModelType,
+        schemas: tuple[SchemaType, SchemaType, SchemaType],
+        router: type[BaseRouter],
+        *args,
+        **kwargs,
+    ) -> BaseRouter:
+        _router = router(self.get_db, model, *schemas, *args, **kwargs)
+        if not _router.prefix:
+            msg = "Router prefix is not set"
+            raise ValueError(msg)
+        self.app.include_router(_router.api_router, prefix=_router.prefix)
+        return _router
