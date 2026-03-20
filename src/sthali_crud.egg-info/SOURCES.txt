@@ -1,0 +1,11 @@
+pyproject.toml
+src/sthali_crud/__init__.py
+src/sthali_crud/config.py
+src/sthali_crud/dependencies.py
+src/sthali_crud.egg-info/PKG-INFO
+src/sthali_crud.egg-info/SOURCES.txt
+src/sthali_crud.egg-info/dependency_links.txt
+src/sthali_crud.egg-info/requires.txt
+src/sthali_crud.egg-info/top_level.txt
+src/sthali_crud/routers/__init__.py
+src/sthali_crud/routers/api.py

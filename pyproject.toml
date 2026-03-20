@@ -6,7 +6,7 @@ requires = [
 
 [project]
 name = "sthali-crud"
-version = "0.0.7"
+version = "0.0.8"
 authors = [
   { name = "Jhunu Fernandes", email = "jhunu.fernandes@gmail.com" },
 ]
@@ -30,15 +30,16 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "sthali-db >= 0.0.3",
+  "sthali-core @ file:../sthali-core/",
+  "sthali-db @ file:../sthali-db/",
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/project-sthali/sthali-crud"
-"Bug Tracker" = "https://github.com/project-sthali/sthali-crud/issues"
-"Source" = "https://github.com/project-sthali/sthali-crud"
-"Documentation" = "https://project-sthali.github.io/sthali-crud"
-"Changelog" = "https://github.com/project-sthali/sthali-crud/releases"
+"Homepage" = "https://github.com/jhunufernandes/sthali-crud"
+"Bug Tracker" = "https://github.com/jhunufernandes/sthali-crud/issues"
+"Source" = "https://github.com/jhunufernandes/sthali-crud"
+"Documentation" = "https://jhunufernandes.github.io/sthali-crud"
+"Changelog" = "https://github.com/jhunufernandes/sthali-crud/releases"
 
 [project.optional-dependencies]
 dev = [
@@ -62,13 +63,19 @@ select = [
 ]
 ignore = [
   "ANN401",  # any-type
+  "ANN003",  # missing-type-kwargs
+  "ANN002",  # missing-type-args
   "TID252",  # relative-imports
 ]
 
 [tool.ruff.lint.per-file-ignores]
-# "src/sthali_crud/config.py" = [
-#   "UP007",  # non-pep604-annotation
-# ]
+"src/sthali_crud/routers/api.py" = [
+  "D417",  # undocumented-param
+]
+"src/sthali_crud/routers/views.py" = [
+  "D417",  # undocumented-param
+]
+
 "tests/*" = [
   "COM812",  # missing-trailing-comma
   "D100",  # undocumented-public-module

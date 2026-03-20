@@ -1,0 +1,36 @@
+Metadata-Version: 2.4
+Name: sthali-crud
+Version: 0.0.8
+Summary: A FastAPI package for CRUD operations
+Author-email: Jhunu Fernandes <jhunu.fernandes@gmail.com>
+Project-URL: Homepage, https://github.com/jhunufernandes/sthali-crud
+Project-URL: Bug Tracker, https://github.com/jhunufernandes/sthali-crud/issues
+Project-URL: Source, https://github.com/jhunufernandes/sthali-crud
+Project-URL: Documentation, https://jhunufernandes.github.io/sthali-crud
+Project-URL: Changelog, https://github.com/jhunufernandes/sthali-crud/releases
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Topic :: Internet :: WWW/HTTP :: HTTP Servers
+Classifier: Topic :: Internet :: WWW/HTTP
+Classifier: Topic :: Internet
+Classifier: Topic :: Software Development :: Libraries :: Application Frameworks
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Software Development :: Libraries
+Classifier: Topic :: Software Development
+Classifier: Typing :: Typed
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: sthali-core @ file:../sthali-core/
+Requires-Dist: sthali-db @ file:../sthali-db/
+Provides-Extra: dev
+Requires-Dist: coverage[toml]>=7.9.1; extra == "dev"
+Requires-Dist: ruff>=0.12.0; extra == "dev"
+Provides-Extra: tests
+Requires-Dist: coverage[toml]>=7.9.1; extra == "tests"
+Provides-Extra: stage
+Requires-Dist: build>=1.2.1; extra == "stage"
+Requires-Dist: coverage[toml]>=7.9.1; extra == "stage"
