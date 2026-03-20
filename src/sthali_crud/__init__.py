@@ -1,13 +1,12 @@
 """{...}."""
 
-from collections.abc import AsyncGenerator, Sequence
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from logging import getLogger
 
 from fastapi import FastAPI
+from sthali_db import Engine, ModelType, SchemaType, definitions_type
 
-from .config import config
-from .database import Engine, ModelType, SchemaType
 from .routers import Base as BaseRouter
 from .routers.api import API
 
@@ -17,7 +16,7 @@ __all__ = [
     "SthaliCRUD",
 ]
 
-engine = Engine.load_from_config(config.yaml_config["database_uri"])
+
 logger = getLogger(__name__)
 
 
@@ -33,7 +32,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         None
     """
     try:
-        await engine.test_db()
+        # engine = Engine.load_from_config(config.yaml_config["crudmodels"]["database_uri"])
+        # await engine.test_db()
         logger.info("Database connection successful")
     except RuntimeError as e:
         message = f"Database connection failed: {e}"
@@ -50,12 +50,14 @@ class SthaliCRUD:
     """FastAPI application for Sthali CRUD operations."""
     def __init__(
         self,
-        definitions: Sequence[tuple[ModelType, tuple[SchemaType, SchemaType, SchemaType]]],
+        config,
+        definitions: definitions_type,
         extended_routers: list[type[BaseRouter]] | None = None,
+        dependencies: dict | None = None,
     ) -> None:
         """Initialize the Sthali CRUD FastAPI application."""
-        self.engine = Engine.load_from_config(config.yaml_config["database_uri"])
-        self.get_db = engine.get_db
+        self.engine = Engine.load_from_config(config.yaml_config["crudmodels"]["database_uri"])
+        self.dependencies = dependencies
 
         app = FastAPI(lifespan=lifespan)
         self.app = app
@@ -76,6 +78,7 @@ class SthaliCRUD:
             "table": resource_name,
             "title": model_json_schema.get("title", resource_name),
             "view_read_many": f"/views/{resource_name}",
+            "api": api,
         }
 
     def register_api_router(
@@ -86,9 +89,9 @@ class SthaliCRUD:
         *args,
         **kwargs,
     ) -> BaseRouter:
-        _router = router(self.get_db, model, *schemas, *args, **kwargs)
+        _router = router(self.engine.db_session, model, *schemas, *args, **kwargs)
         if not _router.prefix:
             msg = "Router prefix is not set"
             raise ValueError(msg)
-        self.app.include_router(_router.api_router, prefix=_router.prefix)
+        self.app.include_router(_router.api_router, prefix=_router.prefix, dependencies=[self.dependencies["api_key"]])
         return _router

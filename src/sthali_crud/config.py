@@ -3,7 +3,6 @@
 from typing import Any
 
 from fastapi import Request
-from sthali_core.config import Config as BaseConfig
 from sthali_core.config import ConfigSchema as BaseConfigSchema
 
 
@@ -24,16 +23,8 @@ def get_context_processors(request: Request) -> dict[str, Any]:
 
 
 class ConfigSchema(BaseConfigSchema):
-    database_uri: str
+    class CrudmodelSchema(BaseConfigSchema):
+        database_uri: str
+        dependencies: list[str] | None = None
 
-
-class Config(BaseConfig):
-    """{...}."""
-    config_schema = ConfigSchema
-
-    def __init__(self, config_file_path: str) -> None:
-        """{...}."""
-        super().__init__(config_file_path)
-
-
-config = Config.load()
+    crudmodels: CrudmodelSchema

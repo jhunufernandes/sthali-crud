@@ -1,14 +1,26 @@
 """{...}."""
-from typing import Annotated
+from collections.abc import Callable
+from typing import Annotated, Any
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sthali_db import DBSession, ModelType, SchemaType
+from sthali_db.engine import session_ctx
 
-from sthali_db import ModelType, SchemaType
 from ..dependencies import paginate_parameters
 from . import Base
+
+
+def replace_type_hint(
+    original_func: Callable[..., Any],
+    type_name: str,
+    new_type: SchemaType,
+) -> Callable[..., Any]:
+    """{...}."""
+    if original_func.__annotations__ and type_name in original_func.__annotations__:
+        original_func.__annotations__[type_name] = new_type
+    return original_func
 
 
 class API(Base):
@@ -37,102 +49,32 @@ class API(Base):
             "url_for_api_read_many": f"api_read_many_{self.resource_name}",
         }
 
-    def _make_create_endpoint(self):
-        """Factory for create endpoint with injected dependencies."""
-        model = self.model
-        handle_result = self.handle_result
-        CreateSchema = self.create_schema
+    @property
+    def create_endpoint(self):
+        return self._make_create_endpoint()
 
-        async def create_endpoint(
-            db: Annotated[AsyncSession, Depends(self.get_db)],
-            resource: CreateSchema,
-        ) -> SchemaType:
-            resource_id = uuid4()
-            resource_obj = resource.model_dump()
-            obj = model(**resource_obj, id=resource_id)
-            db.add(obj)
-            await db.commit()
-            return handle_result(obj)
+    @property
+    def read_endpoint(self):
+        return self._make_read_endpoint()
 
-        return create_endpoint
+    @property
+    def update_endpoint(self):
+        return self._make_update_endpoint()
 
-    def _make_read_endpoint(self):
-        """Factory for read endpoint with injected dependencies."""
-        model = self.model
-        handle_result = self.handle_result
+    @property
+    def delete_endpoint(self):
+        return self._make_delete_endpoint()
 
-        async def read_endpoint(
-            db: Annotated[AsyncSession, Depends(self.get_db)],
-            resource_id: UUID,
-        ) -> SchemaType:
-            result = await db.get(model, resource_id)
-            return handle_result(result)
-
-        return read_endpoint
-
-    def _make_update_endpoint(self):
-        """Factory for update endpoint with injected dependencies."""
-        model = self.model
-        handle_result = self.handle_result
-        UpdateSchema = self.update_schema
-
-        async def update_endpoint(
-            db: Annotated[AsyncSession, Depends(self.get_db)],
-            request: Request,
-            resource_id: UUID,
-            resource: UpdateSchema,
-        ) -> SchemaType:
-            result = await db.get(model, resource_id)
-            if not result:
-                raise HTTPException(status.HTTP_404_NOT_FOUND, "Resource not found")
-
-            partial = request.method == "PATCH"
-            resource_obj = resource.model_dump(exclude_unset=partial)
-
-            for key, value in resource_obj.items():
-                setattr(result, key, value)
-            await db.commit()
-            await db.refresh(result)
-            return handle_result(result)
-
-        return update_endpoint
-
-    def _make_delete_endpoint(self):
-        """Factory for delete endpoint with injected dependencies."""
-        model = self.model
-
-        async def delete_endpoint(
-            db: Annotated[AsyncSession, Depends(self.get_db)],
-            resource_id: UUID,
-        ) -> None:
-            result = await db.get(model, resource_id)
-            if result:
-                await db.delete(result)
-                await db.commit()
-
-        return delete_endpoint
-
-    def _make_read_many_endpoint(self):
-        """Factory for read_many endpoint with injected dependencies."""
-        model = self.model
-        handle_list_result = self.handle_list_result
-
-        async def read_many_endpoint(
-            db: Annotated[AsyncSession, Depends(self.get_db)],
-            paginate_params: paginate_parameters = None,
-        ) -> list[SchemaType]:
-            query = await db.execute(select(model))
-            result: list[ModelType] = query.scalars().all()  # type: ignore
-            return handle_list_result(result)
-
-        return read_many_endpoint
+    @property
+    def read_many_endpoint(self):
+        return self._make_read_many_endpoint()
 
     @property
     def api_router(self) -> APIRouter:
         router = APIRouter(prefix=f"/{self.resource_name}", tags=["api", self.resource_name])
         router.add_api_route(
             "/",
-            self._make_create_endpoint(),
+            replace_type_hint(self.create_endpoint, "resource", self.create_schema),
             name=f"api_create_{self.resource_name}",
             response_model=self.read_schema,
             methods=["POST"],
@@ -140,28 +82,28 @@ class API(Base):
         )
         router.add_api_route(
             "/{resource_id}/",
-            self._make_read_endpoint(),
+            self.read_endpoint,
             name=f"api_read_{self.resource_name}",
             response_model=self.read_schema,
             methods=["GET"],
         )
         router.add_api_route(
             "/{resource_id}/",
-            self._make_update_endpoint(),
+            replace_type_hint(self.update_endpoint, "resource", self.update_schema),
             name=f"api_update_{self.resource_name}",
             response_model=self.read_schema,
             methods=["PUT"],
         )
         router.add_api_route(
             "/{resource_id}/",
-            self._make_update_endpoint(),
+            replace_type_hint(self.update_endpoint, "resource", self.update_schema),
             name=f"api_update_{self.resource_name}",
             response_model=self.read_schema,
             methods=["PATCH"],
         )
         router.add_api_route(
             "/{resource_id}/",
-            self._make_delete_endpoint(),
+            self.delete_endpoint,
             name=f"api_delete_{self.resource_name}",
             response_model=None,
             methods=["DELETE"],
@@ -169,10 +111,104 @@ class API(Base):
         )
         router.add_api_route(
             "/",
-            self._make_read_many_endpoint(),
+            self.read_many_endpoint,
             name=f"api_read_many_{self.resource_name}",
             response_model=list[self.read_schema],
             methods=["GET"],
         )
         return router
+
+    # def _get_links(self, resource: SchemaType) -> dict[str, list[dict[str, str]]]:
+    #     return {
+    #         "_links": [
+    #             {
+    #                 "href": f"/{self.resource_name}/{resource.id}",
+    #                 "type": "GET",
+    #                 "rel": "self",
+    #             },
+    #             {
+    #                 "href": f"/{self.resource_name}/{resource.id}",
+    #                 "type": "PUT",
+    #                 "rel": "update",
+    #             },
+    #             {
+    #                 "href": f"/{self.resource_name}/{resource.id}",
+    #                 "type": "DELETE",
+    #                 "rel": "delete",
+    #             },
+    #         ],
+    #     }
+
+    def _make_create_endpoint(self) -> Callable[..., Any]:
+        async def create_endpoint(
+            db_session: Annotated[DBSession, Depends(self.db_session)],
+            resource: SchemaType,
+        ) -> SchemaType:
+            async with session_ctx(self.db_session, db_session) as session:
+                resource_id = uuid4()
+                resource_obj = resource.model_dump()
+                resource = self.model(**resource_obj, id=resource_id)
+                session.add(resource)
+                await session.commit()
+                return self.handle_result(resource)
+
+        return create_endpoint
+
+    def _make_read_endpoint(self) -> Callable[..., Any]:
+        async def read_endpoint(
+            db_session: Annotated[DBSession, Depends(self.db_session)],
+            resource_id: UUID,
+        ) -> SchemaType:
+            async with session_ctx(self.db_session, db_session) as session:
+                result = await session.get(self.model, resource_id)
+                return self.handle_result(result)
+
+        return read_endpoint
+
+    def _make_update_endpoint(self) -> Callable[..., Any]:
+        async def update_endpoint(
+            db_session: Annotated[DBSession, Depends(self.db_session)],
+            request: Request,
+            resource_id: UUID,
+            resource: SchemaType,
+        ) -> SchemaType:
+            async with session_ctx(self.db_session, db_session) as session:
+                result = await session.get(self.model, resource_id)
+                if not result:
+                    raise HTTPException(status.HTTP_404_NOT_FOUND, "Resource not found")
+
+                partial = request.method == "PATCH"
+                resource_obj = resource.model_dump(exclude_unset=partial)
+
+                for key, value in resource_obj.items():
+                    setattr(result, key, value)
+                await session.commit()
+                await session.refresh(result)
+                return self.handle_result(result)
+
+        return update_endpoint
+
+    def _make_delete_endpoint(self) -> Callable[..., Any]:
+        async def delete_endpoint(
+            db_session: Annotated[DBSession, Depends(self.db_session)],
+            resource_id: UUID,
+        ) -> None:
+            async with session_ctx(self.db_session, db_session) as session:
+                await session.delete(resource_id)
+                await session.commit()
+
+        return delete_endpoint
+
+
+    def _make_read_many_endpoint(self) -> Callable[..., Any]:
+        async def read_many_endpoint(
+            db_session: Annotated[DBSession, Depends(self.db_session)],
+            paginate_parameters: paginate_parameters = None,
+        ) -> list[SchemaType]:
+            async with session_ctx(self.db_session, db_session) as session:
+                query = await session.execute(select(self.model))
+                result: list[ModelType] = query.scalars().all()  # type: ignore
+                return self.handle_list_result(result)
+
+        return read_many_endpoint
 

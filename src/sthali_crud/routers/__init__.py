@@ -2,8 +2,7 @@
 
 from fastapi import APIRouter, HTTPException, status
 from pydantic import ValidationError
-
-from ..database import ModelType, SchemaType
+from sthali_db import DBSession, ModelType, SchemaType
 
 
 class Base:
@@ -13,14 +12,14 @@ class Base:
 
     def __init__(
         self,
-        get_db,
+        db_session: DBSession,
         model: ModelType,
         create_schema: SchemaType,
         read_schema: SchemaType,
         update_schema: SchemaType,
     ) -> None:
         """{…}."""
-        self.get_db = get_db
+        self.db_session = db_session
         self.model = model
         self.read_schema = read_schema
         self.create_schema = create_schema
