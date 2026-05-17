@@ -1,6 +1,7 @@
-"""{...}."""
+"""RESTful CRUD API router for Sthali models."""
+
 from collections.abc import Callable
-from typing import Annotated, Any
+from typing import Annotated, Any, ClassVar
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
@@ -17,29 +18,36 @@ def replace_type_hint(
     type_name: str,
     new_type: SchemaType,
 ) -> Callable[..., Any]:
-    """{...}."""
+    """Mutate the annotation of a named parameter on a function in place.
+
+    Args:
+        original_func: The function whose annotation will be replaced.
+        type_name: The parameter name whose annotation should be replaced.
+        new_type: The new type to assign to that parameter.
+
+    Returns:
+        The same function with the updated annotation.
+    """
     if original_func.__annotations__ and type_name in original_func.__annotations__:
         original_func.__annotations__[type_name] = new_type
     return original_func
 
 
 class API(Base):
-    """{...}."""
+    """CRUD API router exposing standard REST endpoints for a Sthali model."""
 
-    prefix = "/api/v1"
+    prefix: ClassVar[str] = "/api/v1"
 
     def __init__(self, *args, **kwargs) -> None:
-        """{...}."""
+        """Forward all arguments to the base router initialiser."""
         super().__init__(*args, **kwargs)
 
     @property
     def local_context(self) -> dict[str, str]:
-        """Base context for current view templates.
+        """URL route names for this resource's API endpoints.
 
         Returns:
-        -------
-            Dictionary with base context values.
-
+            Mapping of context keys to FastAPI route names.
         """
         return {
             "url_for_api_create": f"api_create_{self.resource_name}",
@@ -50,27 +58,33 @@ class API(Base):
         }
 
     @property
-    def create_endpoint(self):
+    def create_endpoint(self) -> Callable[..., Any]:
+        """Return the async create endpoint function."""
         return self._make_create_endpoint()
 
     @property
-    def read_endpoint(self):
+    def read_endpoint(self) -> Callable[..., Any]:
+        """Return the async read endpoint function."""
         return self._make_read_endpoint()
 
     @property
-    def update_endpoint(self):
+    def update_endpoint(self) -> Callable[..., Any]:
+        """Return the async update endpoint function."""
         return self._make_update_endpoint()
 
     @property
-    def delete_endpoint(self):
+    def delete_endpoint(self) -> Callable[..., Any]:
+        """Return the async delete endpoint function."""
         return self._make_delete_endpoint()
 
     @property
-    def read_many_endpoint(self):
+    def read_many_endpoint(self) -> Callable[..., Any]:
+        """Return the async read-many endpoint function."""
         return self._make_read_many_endpoint()
 
     @property
     def api_router(self) -> APIRouter:
+        """Build and return the FastAPI APIRouter with all CRUD routes registered."""
         router = APIRouter(prefix=f"/{self.resource_name}", tags=["api", self.resource_name])
         router.add_api_route(
             "/",
@@ -117,27 +131,6 @@ class API(Base):
             methods=["GET"],
         )
         return router
-
-    # def _get_links(self, resource: SchemaType) -> dict[str, list[dict[str, str]]]:
-    #     return {
-    #         "_links": [
-    #             {
-    #                 "href": f"/{self.resource_name}/{resource.id}",
-    #                 "type": "GET",
-    #                 "rel": "self",
-    #             },
-    #             {
-    #                 "href": f"/{self.resource_name}/{resource.id}",
-    #                 "type": "PUT",
-    #                 "rel": "update",
-    #             },
-    #             {
-    #                 "href": f"/{self.resource_name}/{resource.id}",
-    #                 "type": "DELETE",
-    #                 "rel": "delete",
-    #             },
-    #         ],
-    #     }
 
     def _make_create_endpoint(self) -> Callable[..., Any]:
         async def create_endpoint(
@@ -199,16 +192,14 @@ class API(Base):
 
         return delete_endpoint
 
-
     def _make_read_many_endpoint(self) -> Callable[..., Any]:
         async def read_many_endpoint(
             db_session: Annotated[DBSession, Depends(self.db_session)],
-            paginate_parameters: paginate_parameters = None,
+            _paginate_parameters: paginate_parameters = None,
         ) -> list[SchemaType]:
             async with session_ctx(self.db_session, db_session) as session:
                 query = await session.execute(select(self.model))
-                result: list[ModelType] = query.scalars().all()  # type: ignore
+                result: list[ModelType] = query.scalars().all()  # type: ignore[assignment]
                 return self.handle_list_result(result)
 
         return read_many_endpoint
-

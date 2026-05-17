@@ -30,8 +30,8 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "sthali-core @ file:../sthali-core/",
-  "sthali-db @ file:../sthali-db/",
+  "sthali-core @ file:./sthali-core/",
+  "sthali-db @ file:./sthali-db/",
 ]
 
 [project.urls]
